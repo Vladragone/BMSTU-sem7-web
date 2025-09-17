@@ -1,0 +1,8 @@
+<div class="game-container">
+  <div id="panorama" class="panorama-container"></div>
+  <div class="map-container">
+    <div id="guess-map" class="guess-map"></div>
+    <button class="find-button" (click)="onFind()">FindMe!</button>
+    <button *ngIf="role === 'admin'" class="stress-button" (click)="onStressTest()">Стресс тест!</button>
+  </div>
+</div>

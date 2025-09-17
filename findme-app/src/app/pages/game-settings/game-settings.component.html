@@ -1,0 +1,49 @@
+<div class="overlay">
+  <div class="location-selection-box">
+    <div class="settings-box">
+      <h1 class="title">Выберите игровую локацию</h1>
+
+      <mat-form-field appearance="fill" class="select-box">
+        <mat-label>Локация</mat-label>
+        <mat-select [(ngModel)]="selectedLocation">
+          <mat-option *ngFor="let location of locations" [value]="location" class="select-text">
+            {{ location }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="button-group">
+        <button mat-raised-button class="start-button" (click)="startGame()">
+          Начать игру
+        </button>
+        <button mat-raised-button class="back-button" (click)="goBack()">
+          Назад
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <div *ngIf="role === 'admin'" class="add-location-box">
+      <div class="settings-box">
+        <h3 class="add-title">Добавить точку:</h3>
+  
+        <mat-form-field appearance="fill" class="location-input">
+          <mat-label>Lat</mat-label>
+          <input matInput [(ngModel)]="lat" placeholder="Введите широту">
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="location-input">
+          <mat-label>Lng</mat-label>
+          <input matInput [(ngModel)]="lng" placeholder="Введите долготу">
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill" class="location-input">
+          <mat-label>Название</mat-label>
+          <input matInput [(ngModel)]="name" placeholder="Введите название">
+        </mat-form-field>
+  
+        <button mat-raised-button (click)="addLocation()">Добавить точку</button>
+    </div>
+</div>
+</div>
+  

@@ -1,0 +1,21 @@
+<div class="login-page">
+  <h2>Авторизация</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <label>
+      Логин:
+      <input type="text" formControlName="username" />
+    </label>
+
+    <label>
+      Пароль:
+      <input type="password" formControlName="password" />
+    </label>
+
+    <button class="login-btn" type="submit" [disabled]="isSubmitting">Войти</button>
+
+    <button class="back-btn" (click)="goBack()">Назад</button>
+
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </form>
+</div>

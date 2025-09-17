@@ -1,0 +1,175 @@
+.rating-page {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  
+    h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+  
+      th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+  
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+  
+      tbody tr {
+        background-color: #fff;
+        color: #333;
+      }
+  
+      tbody tr.highlight {
+        background-color: #f1f8e9;
+      }
+    }
+  
+    .your-rank {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  
+    .sorting {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      label {
+        margin-right: 10px;
+        font-size: 16px;
+      }
+  
+      .switch-container {
+        position: relative;
+        width: 50px;
+        height: 24px;
+  
+        .switch {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #ccc;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+  
+        .switch-button {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 20px;
+          height: 20px;
+          background-color: white;
+          border-radius: 50%;
+          transition: left 0.3s;
+        }
+  
+        .active {
+          background-color: #4caf50;
+        }
+  
+        .active .switch-button {
+          left: calc(100% - 22px);
+        }
+      }
+    }
+  }
+  
+  .loading {
+    font-size: 18px;
+    color: #ccc;
+    text-align: center;
+  }
+  .sort-label {
+    margin-left: 8px;
+  }
+  .profile-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+  
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      transition: background-color 0.3s;
+    }
+  
+    .start-game-btn {
+      background-color: #4caf50;
+      color: white;
+      &:hover {
+        background-color: #45a049;
+      }
+    }
+  
+    .rating-btn {
+      background-color: #9e9e9e;
+      color: white;
+      &:hover {
+        background-color: #757575;
+      }
+    }
+  
+    .logout-btn {
+      background-color: black;
+      color: white;
+      &:hover {
+        background-color: #333333;
+      }
+    }
+  }
+  
+.help-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-size: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: background-color 0.2s ease;
+}
+
+.help-button:hover {
+  background-color: #0056b3;
+}

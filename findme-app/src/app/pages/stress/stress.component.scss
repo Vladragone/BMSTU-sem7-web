@@ -1,0 +1,58 @@
+div {
+  margin: 20px;
+
+  button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #2c7be5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:disabled {
+      background-color: #a0a0a0;
+      cursor: not-allowed;
+    }
+  }
+
+  &[ng-reflect-ng-if='true'] {
+    font-weight: bold;
+    font-size: 18px;
+    color: #555;
+    margin-top: 10px;
+  }
+}
+
+.results-container {
+  margin-top: 20px;
+
+  .results-block {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+
+  thead {
+    background-color: #2c7be5;
+    color: white;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+}
+
+.chart-wrapper {
+  margin-top: 20px;
+}

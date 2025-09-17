@@ -1,0 +1,41 @@
+<div>
+  <button (click)="runTest()" [disabled]="loading">Запустить стресс-тест</button>
+</div>
+<div>
+ <button (click)="goBack()" [disabled]="loading">Назад</button>
+</div>
+<div *ngIf="loading" class="loading">Выполняется...</div>
+
+<div *ngIf="results.length > 0" class="results-container">
+  <div class="results-block">
+    <table>
+      <thead>
+        <tr>
+          <th>Количество пользователей</th>
+          <th>Время (с)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let result of filteredResults">
+          <td>{{ result.users }}</td>
+          <td>{{ result.time }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-wrapper" style="overflow-x: auto; max-width: 100%; width: 100%; padding-bottom: 10px;">
+      <div style="width: 2000px; min-width: 100%;">
+        <apx-chart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [xaxis]="chartOptions.xaxis"
+          [yaxis]="chartOptions.yaxis"
+          [dataLabels]="chartOptions.dataLabels"
+          [stroke]="chartOptions.stroke"
+          [title]="chartOptions.title"
+          [legend]="chartOptions.legend">
+        </apx-chart>
+      </div>
+    </div>
+  </div>
+</div>
