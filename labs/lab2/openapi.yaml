@@ -1,0 +1,490 @@
+openapi: 3.1.1
+info:
+  title: FindMe API
+  version: v1
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /api/profile/score:
+    put:
+      tags:
+        - profile-controller
+      operationId: updateScore
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: integer
+                format: int32
+      responses:
+        "200":
+          description: Score updated
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+        "401":
+          description: Unauthorized
+  /api/save-game:
+    post:
+      tags:
+        - game-session-controller
+      operationId: saveGameSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameSession'
+      responses:
+        "201":
+          description: Game session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSession'
+        "400":
+          description: Invalid request
+  /api/register:
+    post:
+      tags:
+        - registration-controller
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+      responses:
+        "201":
+          description: User registered
+        "400":
+          description: Invalid data
+  /api/feedback:
+    post:
+      tags:
+        - feedback-controller
+      operationId: addFeedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+      responses:
+        "201":
+          description: Feedback created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+  /api/faq:
+    get:
+      tags:
+        - faq-controller
+      operationId: getAllFaqs
+      responses:
+        "200":
+          description: List of FAQs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Faq'
+    post:
+      tags:
+        - faq-controller
+      operationId: createFaq
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Faq'
+      responses:
+        "201":
+          description: FAQ created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+  /api/auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: JWT token issued
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          description: Invalid credentials
+  /api/admin/locations:
+    post:
+      tags:
+        - location-admin-controller
+      operationId: addLocation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        "201":
+          description: Location created
+        "401":
+          description: Unauthorized
+  /api/faq/{id}:
+    get:
+      tags:
+        - faq-controller
+      operationId: getFaqById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: FAQ found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "404":
+          description: FAQ not found
+    delete:
+      tags:
+        - faq-controller
+      operationId: deleteFaq
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: FAQ deleted
+        "404":
+          description: FAQ not found
+    patch:
+      tags:
+        - faq-controller
+      operationId: updateFaqQuestion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+              required:
+                - question
+      responses:
+        "200":
+          description: FAQ updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "404":
+          description: FAQ not found
+  /api/users/{username}:
+    get:
+      tags:
+        - user-controller
+      operationId: getUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+  /api/rating/top:
+    get:
+      tags:
+        - rating-controller
+      operationId: getTopAndRank
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sortBy
+          in: query
+          required: false
+          schema:
+            type: string
+            default: points
+      responses:
+        "200":
+          description: Rating found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        "401":
+          description: Unauthorized
+  /api/profile:
+    get:
+      tags:
+        - profile-controller
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "401":
+          description: Unauthorized
+        "404":
+          description: Profile not found
+  /api/locations:
+    get:
+      tags:
+        - location-controller
+      operationId: getAllLocationNames
+      responses:
+        "200":
+          description: Location names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /api/locations/all:
+    get:
+      tags:
+        - location-controller
+      operationId: getAll
+      responses:
+        "200":
+          description: All locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+  /api/location/random:
+    get:
+      tags:
+        - random-location-controller
+      operationId: getRandomLocation
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Random location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        "404":
+          description: Location not found
+  /api/game-errors:
+    get:
+      tags:
+        - game-error-controller
+      operationId: getAllGameErrors
+      responses:
+        "200":
+          description: Game errors list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    GameSession:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        userLat:
+          type: number
+          format: double
+        userLng:
+          type: number
+          format: double
+        correctLat:
+          type: number
+          format: double
+        correctLng:
+          type: number
+          format: double
+        earnedScore:
+          type: integer
+          format: int32
+    RegistrationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        rating:
+          type: integer
+          format: int32
+        problem:
+          type: string
+        description:
+          type: string
+    Faq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        question:
+          type: string
+        answer:
+          type: string
+        userId:
+          type: integer
+          format: int64
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/User'
+        score:
+          type: integer
+          format: int32
+        regDate:
+          type: string
+          format: date-time
+        gameNum:
+          type: integer
+          format: int32
+    RatingResponse:
+      type: object
+      properties:
+        top:
+          type: array
+          items:
+            $ref: '#/components/schemas/Profile'
+        yourRank:
+          type: integer
+          format: int32
+        sortBy:
+          type: string
+    GameError:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
