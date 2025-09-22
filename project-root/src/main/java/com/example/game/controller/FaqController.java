@@ -2,12 +2,14 @@ package com.example.game.controller;
 
 import com.example.game.model.Faq;
 import com.example.game.service.interfaces.IFaqService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/faq")
+@RequestMapping("/api/v1/faqs")
 public class FaqController {
 
     private final IFaqService faqService;
@@ -17,31 +19,32 @@ public class FaqController {
     }
 
     @GetMapping
-    public List<Faq> getAllFaqs() {
-        return faqService.getAllFaqs();
+    public ResponseEntity<List<Faq>> getAllFaqs() {
+        return ResponseEntity.ok(faqService.getAllFaqs());
     }
 
     @GetMapping("/{id}")
-    public Faq getFaqById(@PathVariable Long id) {
+    public ResponseEntity<Faq> getFaqById(@PathVariable Long id) {
         return faqService.getFaqById(id)
-                .orElseThrow(() -> new RuntimeException("FAQ с id=" + id + " не найден"));
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Faq createFaq(@RequestBody Faq faq) {
-        return faqService.saveFaq(faq);
+    public ResponseEntity<Faq> createFaq(@RequestBody Faq faq) {
+        Faq created = faqService.saveFaq(faq);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PatchMapping("/{id}")
-    public Faq updateFaqQuestion(@PathVariable Long id, @RequestBody Faq faq) {
-        if (faq.getQuestion() == null) {
-            throw new RuntimeException("Поле question обязательно для PATCH");
-        }
-        return faqService.updateFaqQuestion(id, faq.getQuestion());
+    public ResponseEntity<Faq> updateFaq(@PathVariable Long id, @RequestBody Faq faq) {
+        Faq updated = faqService.updateFaq(id, faq);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteFaq(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFaq(@PathVariable Long id) {
         faqService.deleteFaq(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface IProfileService {
     Profile getProfile(String username);
-    Map<String, Object> updateScore(Map<String, Integer> scoreMap, String username);
+    Profile updateProfile(Map<String, Object> updates, String username);
 }

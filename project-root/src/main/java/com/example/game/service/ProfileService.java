@@ -21,16 +21,20 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public Map<String, Object> updateScore(Map<String, Integer> scoreMap, String username) {
+    public Profile updateProfile(Map<String, Object> updates, String username) {
         Optional<Profile> optionalProfile = profileRepository.findByUserUsername(username);
-        if (optionalProfile.isPresent()) {
-            Profile profile = optionalProfile.get();
-            Integer additionalScore = scoreMap.getOrDefault("score", 0);
+        if (optionalProfile.isEmpty()) {
+            return null;
+        }
+
+        Profile profile = optionalProfile.get();
+
+        if (updates.containsKey("score")) {
+            Integer additionalScore = (Integer) updates.get("score");
             profile.setScore(profile.getScore() + additionalScore);
             profile.setGameNum(profile.getGameNum() + 1);
-            profileRepository.save(profile);
-            return Map.of("totalScore", profile.getScore());
         }
-        return Map.of("error", "Профиль не найден");
+        return profileRepository.save(profile);
     }
+
 }

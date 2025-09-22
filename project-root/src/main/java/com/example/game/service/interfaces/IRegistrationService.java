@@ -1,7 +1,8 @@
 package com.example.game.service.interfaces;
 
 import com.example.game.dto.RegistrationRequest;
+import com.example.game.model.User;
 
 public interface IRegistrationService {
-    void register(RegistrationRequest request);
+    User register(RegistrationRequest request);
 }

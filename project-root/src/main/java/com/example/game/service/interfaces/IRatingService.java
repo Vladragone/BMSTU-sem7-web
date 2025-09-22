@@ -3,5 +3,5 @@ package com.example.game.service.interfaces;
 import com.example.game.dto.RatingResponse;
 
 public interface IRatingService {
-    RatingResponse getSortedRatingAndRank(String token, String sortBy);
+    RatingResponse getSortedRatingAndRank(String token, String sortBy, int limit);
 }

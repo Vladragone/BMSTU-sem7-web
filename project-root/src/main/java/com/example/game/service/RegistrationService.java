@@ -7,9 +7,8 @@ import com.example.game.repository.ProfileRepository;
 import com.example.game.repository.UserRepository;
 import com.example.game.service.interfaces.IRegistrationService;
 import com.example.game.service.interfaces.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.MessageDigest;
@@ -19,41 +18,42 @@ import java.time.LocalDateTime;
 @Service
 public class RegistrationService implements IRegistrationService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+    private final IUserService userService;
 
-    @Autowired
-    private ProfileRepository profileRepository;
-
-    @Autowired
-    private IUserService userService;
+    public RegistrationService(UserRepository userRepository,
+                               ProfileRepository profileRepository,
+                               IUserService userService) {
+        this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
+        this.userService = userService;
+    }
 
     @Override
-    public void register(RegistrationRequest request) {
-        try {
-            if (userService.existsByUsername(request.getUsername())) {
-                throw new IllegalArgumentException("Пользователь с таким именем уже существует");
-            }
-
-            if (userService.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("Пользователь с таким email уже существует");
-            }
-
-            String hashedPassword = hashPassword(request.getPassword());
-
-            User user = new User();
-            user.setUsername(request.getUsername());
-            user.setPassword(hashedPassword);
-            user.setEmail(request.getEmail());
-            user.setRole("user");
-
-            User savedUser = userRepository.save(user);
-
-            Profile profile = new Profile(savedUser, LocalDateTime.now());
-            profileRepository.save(profile);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+    public User register(RegistrationRequest request) {
+        if (userService.existsByUsername(request.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким именем уже существует");
         }
+
+        if (userService.existsByEmail(request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
+        }
+
+        String hashedPassword = hashPassword(request.getPassword());
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(hashedPassword);
+        user.setEmail(request.getEmail());
+        user.setRole("user");
+
+        User savedUser = userRepository.save(user);
+
+        Profile profile = new Profile(savedUser, LocalDateTime.now());
+        profileRepository.save(profile);
+
+        return savedUser;
     }
 
     private String hashPassword(String password) {

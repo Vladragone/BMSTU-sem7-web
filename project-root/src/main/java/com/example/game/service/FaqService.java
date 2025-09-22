@@ -33,9 +33,14 @@ public class FaqService implements IFaqService {
     }
 
     @Override
-    public Faq updateFaqQuestion(Long id, String newQuestion) {
+    public Faq updateFaq(Long id, Faq updates) {
         return faqRepository.findById(id).map(existing -> {
-            existing.setQuestion(newQuestion);
+            if (updates.getQuestion() != null) {
+                existing.setQuestion(updates.getQuestion());
+            }
+            if (updates.getAnswer() != null) {
+                existing.setAnswer(updates.getAnswer());
+            }
             return faqRepository.save(existing);
         }).orElseThrow(() -> new RuntimeException("FAQ с id=" + id + " не найден"));
     }
@@ -45,3 +50,4 @@ public class FaqService implements IFaqService {
         faqRepository.deleteById(id);
     }
 }
+

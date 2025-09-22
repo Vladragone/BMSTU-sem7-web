@@ -1,8 +1,8 @@
 package com.example.game.service.interfaces;
 
 import com.example.game.dto.LoginRequest;
-import org.springframework.http.ResponseEntity;
+import com.example.game.dto.TokenResponse;
 
 public interface IAuthService {
-    ResponseEntity<?> authenticateUser(LoginRequest loginRequest);
+    TokenResponse authenticateUser(LoginRequest loginRequest);
 }

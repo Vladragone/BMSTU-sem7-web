@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/v1/profiles")
 public class ProfileController {
 
     private final IProfileService profileService;
@@ -24,27 +24,35 @@ public class ProfileController {
         this.tokenParser = tokenParser;
     }
 
-    @GetMapping
-    public ResponseEntity<Profile> getProfile(HttpServletRequest request) {
+    @GetMapping("/me")
+    public ResponseEntity<Profile> getMyProfile(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         String username = tokenParser.getUsername(token);
         Profile profile = profileService.getProfile(username);
         if (profile == null) {
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(profile);
     }
 
-    @PutMapping("/score")
-    public ResponseEntity<Map<String, Object>> updateScore(@RequestBody Map<String, Integer> body, HttpServletRequest request) {
+    @PatchMapping("/me")
+    public ResponseEntity<Profile> updateMyProfile(
+            @RequestBody Map<String, Object> updates,
+            HttpServletRequest request) {
+
         String token = request.getHeader("Authorization");
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         String username = tokenParser.getUsername(token);
-        return ResponseEntity.ok(profileService.updateScore(body, username));
+        Profile updatedProfile = profileService.updateProfile(updates, username);
+
+        return ResponseEntity.ok(updatedProfile);
     }
 }

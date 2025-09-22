@@ -5,7 +5,6 @@ import com.example.game.model.Profile;
 import com.example.game.repository.ProfileRepository;
 import com.example.game.service.interfaces.IRatingService;
 import com.example.game.service.interfaces.ITokenParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +18,6 @@ public class RatingService implements IRatingService {
     private final ProfileRepository profileRepository;
     private final ITokenParser tokenParser;
 
-    @Autowired
     public RatingService(ProfileRepository profileRepository, ITokenParser tokenParser) {
         this.profileRepository = profileRepository;
         this.tokenParser = tokenParser;
@@ -27,7 +25,7 @@ public class RatingService implements IRatingService {
 
     @Override
     @Transactional(readOnly = true)
-    public RatingResponse getSortedRatingAndRank(String token, String sortBy) {
+    public RatingResponse getSortedRatingAndRank(String token, String sortBy, int limit) {
         String currentUsername = tokenParser.getUsername(token);
         List<Profile> profiles = profileRepository.findAll();
 
@@ -37,7 +35,7 @@ public class RatingService implements IRatingService {
                 .collect(Collectors.toList());
 
         List<Profile> top = sortedProfiles.stream()
-                .limit(3)
+                .limit(limit)
                 .collect(Collectors.toList());
 
         int rank = findUserRank(sortedProfiles, currentUsername);

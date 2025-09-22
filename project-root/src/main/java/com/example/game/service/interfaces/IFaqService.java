@@ -8,6 +8,7 @@ public interface IFaqService {
     List<Faq> getAllFaqs();
     Faq saveFaq(Faq faq);
     Optional<Faq> getFaqById(Long id);
-    Faq updateFaqQuestion(Long id, String newQuestion);
+    Faq updateFaq(Long id, Faq updates);
     void deleteFaq(Long id);
 }
+
