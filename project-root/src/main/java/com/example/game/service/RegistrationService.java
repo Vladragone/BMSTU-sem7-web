@@ -32,28 +32,34 @@ public class RegistrationService implements IRegistrationService {
 
     @Override
     public User register(RegistrationRequest request) {
-        if (userService.existsByUsername(request.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким именем уже существует");
+        try {
+            if (userService.existsByUsername(request.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким именем уже существует");
+            }
+
+            if (userService.existsByEmail(request.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким email уже существует");
+            }
+
+            String hashedPassword = hashPassword(request.getPassword());
+
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setPassword(hashedPassword);
+            user.setEmail(request.getEmail());
+            user.setRole("user");
+
+            User savedUser = userRepository.save(user);
+
+            Profile profile = new Profile(savedUser, LocalDateTime.now());
+            profileRepository.save(profile);
+
+            return savedUser;
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при регистрации", e);
         }
-
-        if (userService.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
-        }
-
-        String hashedPassword = hashPassword(request.getPassword());
-
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(hashedPassword);
-        user.setEmail(request.getEmail());
-        user.setRole("user");
-
-        User savedUser = userRepository.save(user);
-
-        Profile profile = new Profile(savedUser, LocalDateTime.now());
-        profileRepository.save(profile);
-
-        return savedUser;
     }
 
     private String hashPassword(String password) {
@@ -68,7 +74,7 @@ public class RegistrationService implements IRegistrationService {
 
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Ошибка при хешировании пароля", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при хешировании пароля", e);
         }
     }
 }

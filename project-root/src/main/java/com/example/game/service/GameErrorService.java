@@ -3,7 +3,9 @@ package com.example.game.service;
 import com.example.game.model.GameError;
 import com.example.game.repository.GameErrorRepository;
 import com.example.game.service.interfaces.IGameErrorService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,6 +20,10 @@ public class GameErrorService implements IGameErrorService {
 
     @Override
     public List<GameError> getAllGameErrors() {
-        return gameErrorRepository.findAll();
+        try {
+            return gameErrorRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching game errors", e);
+        }
     }
 }

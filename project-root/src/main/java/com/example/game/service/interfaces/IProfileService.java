@@ -1,10 +1,9 @@
 package com.example.game.service.interfaces;
 
+import com.example.game.dto.ProfileUpdateRequest;
 import com.example.game.model.Profile;
-
-import java.util.Map;
 
 public interface IProfileService {
     Profile getProfile(String username);
-    Profile updateProfile(Map<String, Object> updates, String username);
+    Profile updateProfile(ProfileUpdateRequest updates, String username);
 }

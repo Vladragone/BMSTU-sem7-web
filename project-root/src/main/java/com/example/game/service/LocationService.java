@@ -3,7 +3,9 @@ package com.example.game.service;
 import com.example.game.model.Location;
 import com.example.game.repository.LocationRepository;
 import com.example.game.service.interfaces.ILocationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Random;
@@ -20,22 +22,38 @@ public class LocationService implements ILocationService {
 
     @Override
     public List<String> getDistinctLocationNames() {
-        return locationRepository.findDistinctNames();
+        try {
+            return locationRepository.findDistinctNames();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching location names", e);
+        }
     }
 
     @Override
     public List<Location> getAllLocations() {
-        return locationRepository.findAll();
+        try {
+            return locationRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching locations", e);
+        }
     }
 
     @Override
     public Location addLocation(Location location) {
-        return locationRepository.save(location);
+        try {
+            return locationRepository.save(location);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating location", e);
+        }
     }
 
     @Override
     public Location getRandomLocationByName(String name) {
-        List<Location> locations = locationRepository.findByName(name);
-        return locations.isEmpty() ? null : locations.get(random.nextInt(locations.size()));
+        try {
+            List<Location> locations = locationRepository.findByName(name);
+            return locations.isEmpty() ? null : locations.get(random.nextInt(locations.size()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching random location", e);
+        }
     }
 }

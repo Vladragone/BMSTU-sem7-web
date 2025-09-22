@@ -27,21 +27,28 @@ public class AuthService implements IAuthService {
 
     @Override
     public TokenResponse authenticateUser(LoginRequest loginRequest) {
-        Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
+        try {
+            Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
 
-        if (userOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+            if (userOptional.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+            }
+
+            User user = userOptional.get();
+            String hashedInputPassword = hashPassword(loginRequest.getPassword());
+
+            if (!user.getPassword().equals(hashedInputPassword)) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
+            }
+
+            String token = JwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
+            return new TokenResponse(token);
+
+        } catch (ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal authentication error", ex);
         }
-
-        User user = userOptional.get();
-        String hashedInputPassword = hashPassword(loginRequest.getPassword());
-
-        if (!user.getPassword().equals(hashedInputPassword)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
-        }
-
-        String token = JwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
-        return new TokenResponse(token);
     }
 
     private String hashPassword(String password) {
@@ -54,7 +61,7 @@ public class AuthService implements IAuthService {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error hashing password", e);
         }
     }
 }

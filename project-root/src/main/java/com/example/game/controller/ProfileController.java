@@ -1,8 +1,12 @@
 package com.example.game.controller;
 
 import com.example.game.model.Profile;
+import com.example.game.dto.ProfileUpdateRequest;
 import com.example.game.service.interfaces.IProfileService;
 import com.example.game.service.interfaces.ITokenParser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,13 @@ public class ProfileController {
         this.tokenParser = tokenParser;
     }
 
+    @Operation(summary = "Получить профиль текущего пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Профиль найден"),
+            @ApiResponse(responseCode = "401", description = "Неавторизован"),
+            @ApiResponse(responseCode = "404", description = "Профиль не найден"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    })
     @GetMapping("/me")
     public ResponseEntity<Profile> getMyProfile(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
@@ -34,17 +45,24 @@ public class ProfileController {
         String username = tokenParser.getUsername(token);
         Profile profile = profileService.getProfile(username);
         if (profile == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         return ResponseEntity.ok(profile);
     }
 
+    @Operation(summary = "Обновить профиль текущего пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Профиль обновлён"),
+            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
+            @ApiResponse(responseCode = "401", description = "Неавторизован"),
+            @ApiResponse(responseCode = "404", description = "Профиль не найден"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    })
     @PatchMapping("/me")
     public ResponseEntity<Profile> updateMyProfile(
-            @RequestBody Map<String, Object> updates,
+            @RequestBody ProfileUpdateRequest updates,
             HttpServletRequest request) {
-
         String token = request.getHeader("Authorization");
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -52,6 +70,10 @@ public class ProfileController {
 
         String username = tokenParser.getUsername(token);
         Profile updatedProfile = profileService.updateProfile(updates, username);
+
+        if (updatedProfile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
         return ResponseEntity.ok(updatedProfile);
     }
