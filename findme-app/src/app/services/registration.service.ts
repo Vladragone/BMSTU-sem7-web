@@ -9,7 +9,7 @@ import { environment } from '../../env/env';
 })
 export class RegistrationService {
 
-  private apiUrl = `${environment.apiBaseUrl}/api/register`;
+  private apiUrl = `${environment.apiBaseUrl}/api/v1/users`;
 
   constructor(private http: HttpClient) {}
 

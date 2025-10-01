@@ -14,7 +14,7 @@ export interface Faq {
   providedIn: 'root'
 })
 export class FaqService {
-  private apiUrl = `${environment.apiBaseUrl}/api/faq`;
+  private apiUrl = `${environment.apiBaseUrl}/api/v1/faqs`;
 
   constructor(private http: HttpClient) {}
 
@@ -24,5 +24,17 @@ export class FaqService {
 
   addFaq(faq: Omit<Faq, 'id'>): Observable<Faq> {
     return this.http.post<Faq>(this.apiUrl, faq);
+  }
+
+  getFaqById(id: number): Observable<Faq> {
+    return this.http.get<Faq>(`${this.apiUrl}/${id}`);
+  }
+
+  updateFaq(id: number, updates: Partial<Faq>): Observable<Faq> {
+    return this.http.patch<Faq>(`${this.apiUrl}/${id}`, updates);
+  }
+
+  deleteFaq(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -8,14 +8,17 @@ import { environment } from '../../env/env';
   providedIn: 'root'
 })
 export class RatingService {
-  private apiUrl = `${environment.apiBaseUrl}/api/rating/top`;
+  private apiUrl = `${environment.apiBaseUrl}/api/v1/ratings`;
 
   constructor(private http: HttpClient) {}
 
-  getRating(sortBy: 'points' | 'games'): Observable<RatingResponse> {
+  getRating(sortBy: 'points' | 'games', limit: number = 3): Observable<RatingResponse> {
     const token = localStorage.getItem('token') || '';
-    const headers = new HttpHeaders().set('Authorization', token);
-    const params = new HttpParams().set('sortBy', sortBy);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    const params = new HttpParams()
+      .set('sortBy', sortBy)
+      .set('limit', limit);
+
     return this.http.get<RatingResponse>(this.apiUrl, { headers, params });
   }
 }

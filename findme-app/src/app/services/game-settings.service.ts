@@ -12,16 +12,16 @@ export class LocationService {
   constructor(private http: HttpClient) {}
 
   getLocationNames(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/api/locations`);
+    return this.http.get<string[]>(`${this.baseUrl}/api/v1/locations/names`);
   }
 
-  addLocation(location: { lat: number, lng: number, name: string }): Observable<any> {
+  addLocation(location: { lat: number; lng: number; name: string }): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': token ? token : '',
+      'Authorization': token ? `Bearer ${token}` : '',
       'Content-Type': 'application/json'
     });
 
-    return this.http.post(`${this.baseUrl}/api/admin/locations`, location, { headers });
+    return this.http.post(`${this.baseUrl}/api/v1/locations`, location, { headers });
   }
 }

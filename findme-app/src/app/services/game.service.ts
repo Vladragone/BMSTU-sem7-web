@@ -20,6 +20,6 @@ export class GameService {
 
   getRandomLocation(name: string): Observable<GameLocation> {
     const params = new HttpParams().set('name', name);
-    return this.http.get<GameLocation>(`${this.baseUrl}/api/location/random`, { params });
+    return this.http.get<GameLocation>(`${this.baseUrl}/api/v1/locations/random`, { params });
   }
 }

@@ -8,15 +8,16 @@ import { Profile } from '../model/profile';
 })
 export class ProfileService {
 
-  private apiUrl = 'http://localhost:8080/api/profile';
+  private apiUrl = 'http://localhost:8080/api/v1/profiles/me';
 
   constructor(private http: HttpClient) {}
 
   getProfile(): Observable<Profile> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': token ?? ''
+      'Authorization': `Bearer ${token}`
     });
+
     return this.http.get<Profile>(this.apiUrl, { headers });
   }
 }

@@ -1,359 +1,668 @@
-openapi: 3.1.1
+openapi: 3.0.1
 info:
   title: FindMe API
+  description: REST API
   version: v1
 servers:
-  - url: http://localhost:8080
-    description: Local server
+- url: http://localhost:8080
+  description: Generated server url
 paths:
-  /api/profile/score:
-    put:
-      tags:
-        - profile-controller
-      operationId: updateScore
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties:
-                type: integer
-                format: int32
-      responses:
-        "200":
-          description: Score updated
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  type: object
-        "401":
-          description: Unauthorized
-  /api/save-game:
+  /api/v1/users:
     post:
       tags:
-        - game-session-controller
-      operationId: saveGameSession
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GameSession'
-      responses:
-        "201":
-          description: Game session created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GameSession'
-        "400":
-          description: Invalid request
-  /api/register:
-    post:
-      tags:
-        - registration-controller
+      - user-controller
+      summary: Регистрация нового пользователя
       operationId: register
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RegistrationRequest'
+        required: true
       responses:
-        "201":
-          description: User registered
         "400":
-          description: Invalid data
-  /api/feedback:
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        "409":
+          description: Пользователь с таким именем или почтой уже существует
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        "201":
+          description: Пользователь успешно зарегистрирован
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/v1/tokens:
     post:
       tags:
-        - feedback-controller
+      - auth-controller
+      summary: Создание JWT токена по логину и паролю
+      operationId: createToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        "401":
+          description: Неверные логин или пароль
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "200":
+          description: Успешная аутентификация
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+  /api/v1/locations:
+    get:
+      tags:
+      - location-controller
+      summary: Получить список всех локаций
+      operationId: getAllLocations
+      responses:
+        "200":
+          description: Локации успешно получены
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+        "204":
+          description: Локации отсутствуют
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+    post:
+      tags:
+      - location-controller
+      summary: Создать новую локацию
+      operationId: createLocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+        required: true
+      responses:
+        "201":
+          description: Локация успешно создана
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Location'
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Location'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Location'
+  /api/v1/gamesessions:
+    post:
+      tags:
+      - game-session-controller
+      summary: Создать новую игровую сессию
+      operationId: createGameSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameSession'
+        required: true
+      responses:
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameSession'
+        "201":
+          description: Игровая сессия успешно создана
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameSession'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GameSession'
+  /api/v1/feedbacks:
+    post:
+      tags:
+      - feedback-controller
+      summary: Добавить отзыв/обратную связь
       operationId: addFeedback
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Feedback'
+        required: true
       responses:
         "201":
-          description: Feedback created
+          description: Отзыв успешно сохранён
           content:
-            application/json:
+            '*/*':
               schema:
                 $ref: '#/components/schemas/Feedback'
-  /api/faq:
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Feedback'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Feedback'
+  /api/v1/faqs:
     get:
       tags:
-        - faq-controller
+      - faq-controller
+      summary: Получить список всех FAQ
       operationId: getAllFaqs
       responses:
         "200":
-          description: List of FAQs
+          description: FAQ успешно получены
           content:
-            application/json:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Faq'
+        "204":
+          description: FAQ отсутствуют
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Faq'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Faq'
     post:
       tags:
-        - faq-controller
+      - faq-controller
+      summary: Создать новый FAQ
       operationId: createFaq
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Faq'
+        required: true
       responses:
         "201":
-          description: FAQ created
+          description: FAQ создан
           content:
-            application/json:
+            '*/*':
               schema:
                 $ref: '#/components/schemas/Faq'
-  /api/auth/login:
-    post:
-      tags:
-        - auth-controller
-      operationId: login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-      responses:
-        "200":
-          description: JWT token issued
+        "400":
+          description: Некорректный запрос
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-        "401":
-          description: Invalid credentials
-  /api/admin/locations:
-    post:
-      tags:
-        - location-admin-controller
-      operationId: addLocation
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Location'
-      responses:
-        "201":
-          description: Location created
-        "401":
-          description: Unauthorized
-  /api/faq/{id}:
+                $ref: '#/components/schemas/Faq'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+  /api/v1/profiles/me:
     get:
       tags:
-        - faq-controller
-      operationId: getFaqById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
+      - profile-controller
+      summary: Получить профиль текущего пользователя
+      operationId: getMyProfile
       responses:
-        "200":
-          description: FAQ found
+        "401":
+          description: Неавторизован
           content:
-            application/json:
+            '*/*':
               schema:
-                $ref: '#/components/schemas/Faq'
+                $ref: '#/components/schemas/Profile'
+        "200":
+          description: Профиль найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
         "404":
-          description: FAQ not found
-    delete:
-      tags:
-        - faq-controller
-      operationId: deleteFaq
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "204":
-          description: FAQ deleted
-        "404":
-          description: FAQ not found
+          description: Профиль не найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
     patch:
       tags:
-        - faq-controller
-      operationId: updateFaqQuestion
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
+      - profile-controller
+      summary: Обновить профиль текущего пользователя
+      operationId: updateMyProfile
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                question:
-                  type: string
-              required:
-                - question
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+        required: true
+      responses:
+        "401":
+          description: Неавторизован
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "200":
+          description: Профиль обновлён
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "404":
+          description: Профиль не найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Profile'
+  /api/v1/faqs/{id}:
+    get:
+      tags:
+      - faq-controller
+      summary: Получить FAQ по ID
+      operationId: getFaqById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "404":
+          description: FAQ не найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "200":
+          description: FAQ найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+    delete:
+      tags:
+      - faq-controller
+      summary: Удалить FAQ по ID
+      operationId: deleteFaq
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: FAQ удалён
+        "404":
+          description: FAQ не найден
+        "500":
+          description: Ошибка сервера
+    patch:
+      tags:
+      - faq-controller
+      summary: Обновить существующий FAQ
+      operationId: updateFaq
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Faq'
+        required: true
       responses:
         "200":
-          description: FAQ updated
+          description: FAQ обновлён
           content:
-            application/json:
+            '*/*':
               schema:
                 $ref: '#/components/schemas/Faq'
         "404":
-          description: FAQ not found
-  /api/users/{username}:
+          description: FAQ не найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Faq'
+  /api/v1/users/{username}:
     get:
       tags:
-        - user-controller
+      - user-controller
+      summary: Получить данные пользователя по username
       operationId: getUser
       parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
-        "200":
-          description: User found
+        "404":
+          description: Пользователь не найден
           content:
-            application/json:
+            '*/*':
               schema:
                 $ref: '#/components/schemas/User'
-        "404":
-          description: User not found
-  /api/rating/top:
+        "200":
+          description: Пользователь найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/v1/ratings:
     get:
       tags:
-        - rating-controller
-      operationId: getTopAndRank
-      security:
-        - bearerAuth: []
+      - rating-controller
+      summary: Получить рейтинг игроков
+      operationId: getRatings
       parameters:
-        - name: sortBy
-          in: query
-          required: false
-          schema:
-            type: string
-            default: points
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: points
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 3
       responses:
         "200":
-          description: Rating found
+          description: Рейтинг успешно получен
           content:
-            application/json:
+            '*/*':
               schema:
                 $ref: '#/components/schemas/RatingResponse'
         "401":
-          description: Unauthorized
-  /api/profile:
+          description: Неавторизован
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        "400":
+          description: Некорректный запрос
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        "404":
+          description: Пользователь не найден в рейтинге
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+  /api/v1/locations/random:
     get:
       tags:
-        - profile-controller
-      operationId: getProfile
-      security:
-        - bearerAuth: []
+      - location-controller
+      summary: Получить случайную локацию по имени
+      operationId: getRandomLocation
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
       responses:
         "200":
-          description: Profile found
+          description: Локация найдена
           content:
-            application/json:
+            '*/*':
               schema:
-                $ref: '#/components/schemas/Profile'
-        "401":
-          description: Unauthorized
+                $ref: '#/components/schemas/Location'
         "404":
-          description: Profile not found
-  /api/locations:
+          description: Локации с таким именем не существует
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Location'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Location'
+  /api/v1/locations/names:
     get:
       tags:
-        - location-controller
+      - location-controller
+      summary: Получить список всех уникальных имён локаций
       operationId: getAllLocationNames
       responses:
-        "200":
-          description: Location names
+        "204":
+          description: Названия отсутствуют
           content:
-            application/json:
+            '*/*':
               schema:
                 type: array
                 items:
                   type: string
-  /api/locations/all:
-    get:
-      tags:
-        - location-controller
-      operationId: getAll
-      responses:
         "200":
-          description: All locations
+          description: Названия успешно получены
           content:
-            application/json:
+            '*/*':
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Location'
-  /api/location/random:
-    get:
-      tags:
-        - random-location-controller
-      operationId: getRandomLocation
-      parameters:
-        - name: name
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Random location
+                  type: string
+        "500":
+          description: Ошибка сервера
           content:
-            application/json:
+            '*/*':
               schema:
-                $ref: '#/components/schemas/Location'
-        "404":
-          description: Location not found
-  /api/game-errors:
+                type: array
+                items:
+                  type: string
+  /api/v1/game-errors:
     get:
       tags:
-        - game-error-controller
+      - game-error-controller
+      summary: Получить список ошибок игры
       operationId: getAllGameErrors
       responses:
-        "200":
-          description: Game errors list
+        "204":
+          description: Ошибки отсутствуют
           content:
-            application/json:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameError'
+        "200":
+          description: Ошибки успешно получены
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameError'
+        "500":
+          description: Ошибка сервера
+          content:
+            '*/*':
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/GameError'
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
   schemas:
+    RegistrationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
     GameSession:
       type: object
       properties:
@@ -378,15 +687,6 @@ components:
         earnedScore:
           type: integer
           format: int32
-    RegistrationRequest:
-      type: object
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
     Feedback:
       type: object
       properties:
@@ -416,41 +716,12 @@ components:
         userId:
           type: integer
           format: int64
-    LoginRequest:
+    ProfileUpdateRequest:
       type: object
       properties:
-        username:
-          type: string
-        password:
-          type: string
-    Location:
-      type: object
-      properties:
-        id:
+        score:
           type: integer
-          format: int64
-        name:
-          type: string
-        lat:
-          type: number
-          format: double
-        lng:
-          type: number
-          format: double
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
+          format: int32
     Profile:
       type: object
       properties:

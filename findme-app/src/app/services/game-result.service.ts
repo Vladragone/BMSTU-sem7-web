@@ -8,10 +8,9 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class GameResultService {
-  private apiUrl = `${environment.apiBaseUrl}/api/profile/score`;
-  private saveGameUrl = `${environment.apiBaseUrl}/api/save-game`;
-  private gameErrorsUrl = `${environment.apiBaseUrl}/api/game-errors`;
-  private feedbackUrl = `${environment.apiBaseUrl}/api/feedback`;
+  private updateProfileUrl = `${environment.apiBaseUrl}/api/v1/profiles/me`;
+  private saveGameUrl = `${environment.apiBaseUrl}/api/v1/gamesessions`;
+  private gameErrorsUrl = `${environment.apiBaseUrl}/api/v1/game-errors`;  private feedbackUrl = `${environment.apiBaseUrl}/api/v1/feedbacks`;
 
   constructor(private http: HttpClient) {}
 
@@ -21,10 +20,10 @@ export class GameResultService {
       return throwError(() => new Error('Token is missing'));
     }
 
-    const headers = new HttpHeaders().set('Authorization', token);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     const body = { score };
 
-    return this.http.put(this.apiUrl, body, { headers }).pipe(
+    return this.http.patch(this.updateProfileUrl, body, { headers }).pipe(
       catchError((error) => {
         console.error('Error updating score', error);
         return throwError(() => error);
@@ -38,7 +37,7 @@ export class GameResultService {
       return throwError(() => new Error('Token is missing'));
     }
 
-    const headers = new HttpHeaders().set('Authorization', token);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     const body = { userId, userLat, userLng, correctLat, correctLng, earnedScore };
 
     return this.http.post(this.saveGameUrl, body, { headers }).pipe(
@@ -64,7 +63,7 @@ export class GameResultService {
       return throwError(() => new Error('Token is missing'));
     }
 
-    const headers = new HttpHeaders().set('Authorization', token);
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post(this.feedbackUrl, feedback, { headers }).pipe(
       catchError((error) => {
         console.error('Error sending feedback', error);
