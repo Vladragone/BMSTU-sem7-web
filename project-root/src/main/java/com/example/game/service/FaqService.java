@@ -1,5 +1,6 @@
-package com.example.game.service;
+package com.example.game.service.impl;
 
+import com.example.game.dto.FaqUpdateRequest;
 import com.example.game.model.Faq;
 import com.example.game.repository.FaqRepository;
 import com.example.game.service.interfaces.IFaqService;
@@ -21,11 +22,12 @@ public class FaqService implements IFaqService {
 
     @Override
     public List<Faq> getAllFaqs() {
-        try {
-            return faqRepository.findAll();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching FAQs", e);
-        }
+        return faqRepository.findAll();
+    }
+
+    @Override
+    public Optional<Faq> getFaqById(Long id) {
+        return faqRepository.findById(id);
     }
 
     @Override
@@ -33,21 +35,12 @@ public class FaqService implements IFaqService {
         try {
             return faqRepository.save(faq);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating FAQ", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving FAQ", e);
         }
     }
 
     @Override
-    public Optional<Faq> getFaqById(Long id) {
-        try {
-            return faqRepository.findById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching FAQ by id", e);
-        }
-    }
-
-    @Override
-    public Faq updateFaq(Long id, Faq updates) {
+    public Faq updateFaq(Long id, FaqUpdateRequest updates) {
         return faqRepository.findById(id).map(existing -> {
             if (updates.getQuestion() != null) {
                 existing.setQuestion(updates.getQuestion());
@@ -58,9 +51,16 @@ public class FaqService implements IFaqService {
             try {
                 return faqRepository.save(existing);
             } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating FAQ", e);
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Error updating FAQ with id=" + id,
+                        e
+                );
             }
-        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "FAQ with id=" + id + " not found"));
+        }).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "FAQ with id=" + id + " not found"
+        ));
     }
 
     @Override

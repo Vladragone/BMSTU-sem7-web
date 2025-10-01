@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.model.Location;
 import com.example.game.service.interfaces.ILocationService;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/locations")
-public class LocationController {
+public class LocationControllerV1 {
 
     private final ILocationService locationService;
 
-    public LocationController(ILocationService locationService) {
+    public LocationControllerV1(ILocationService locationService) {
         this.locationService = locationService;
     }
 

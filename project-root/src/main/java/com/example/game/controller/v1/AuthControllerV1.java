@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.dto.LoginRequest;
 import com.example.game.dto.TokenResponse;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/tokens")
-public class AuthController {
+public class AuthControllerV1 {
 
     private final IAuthService authService;
 
     @Autowired
-    public AuthController(IAuthService authService) {
+    public AuthControllerV1(IAuthService authService) {
         this.authService = authService;
     }
 

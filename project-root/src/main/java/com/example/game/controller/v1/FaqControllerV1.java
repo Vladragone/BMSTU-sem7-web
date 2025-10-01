@@ -1,5 +1,6 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
+import com.example.game.dto.FaqUpdateRequest;
 import com.example.game.model.Faq;
 import com.example.game.service.interfaces.IFaqService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,11 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/faqs")
-public class FaqController {
+public class FaqControllerV1 {
 
     private final IFaqService faqService;
 
-    public FaqController(IFaqService faqService) {
+    public FaqControllerV1(IFaqService faqService) {
         this.faqService = faqService;
     }
 
@@ -69,8 +70,8 @@ public class FaqController {
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<Faq> updateFaq(@PathVariable Long id, @RequestBody Faq faq) {
-        Faq updated = faqService.updateFaq(id, faq);
+    public ResponseEntity<Faq> updateFaq(@PathVariable Long id, @RequestBody FaqUpdateRequest faqRequest) {
+        Faq updated = faqService.updateFaq(id, faqRequest);
         return ResponseEntity.ok(updated);
     }
 

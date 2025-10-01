@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.model.Feedback;
 import com.example.game.service.interfaces.IFeedbackService;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/feedbacks")
-public class FeedbackController {
+public class FeedbackControllerV1 {
 
     private final IFeedbackService feedbackService;
 
-    public FeedbackController(IFeedbackService feedbackService) {
+    public FeedbackControllerV1(IFeedbackService feedbackService) {
         this.feedbackService = feedbackService;
     }
 

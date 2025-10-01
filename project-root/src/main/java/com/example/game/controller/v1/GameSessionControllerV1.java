@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.model.GameSession;
 import com.example.game.service.interfaces.IGameSessionService;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/gamesessions")
-public class GameSessionController {
+public class GameSessionControllerV1 {
 
     private final IGameSessionService gameSessionService;
 
-    public GameSessionController(IGameSessionService gameSessionService) {
+    public GameSessionControllerV1(IGameSessionService gameSessionService) {
         this.gameSessionService = gameSessionService;
     }
 

@@ -13,20 +13,11 @@ public class GameSession {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "user_lat", nullable = false)
-    private Double userLat;
-
-    @Column(name = "user_lng", nullable = false)
-    private Double userLng;
-
-    @Column(name = "correct_lat", nullable = false)
-    private Double correctLat;
-
-    @Column(name = "correct_lng", nullable = false)
-    private Double correctLng;
-
     @Column(name = "earned_score", nullable = false)
     private Integer earnedScore;
+
+    @Column(name = "location_id", nullable = false)
+    private Long locationId;
 
     public GameSession() {}
 
@@ -46,36 +37,12 @@ public class GameSession {
         this.userId = userId;
     }
 
-    public Double getUserLat() {
-        return userLat;
+    public Long getLocationId() {
+        return locationId;
     }
-
-    public void setUserLat(Double userLat) {
-        this.userLat = userLat;
-    }
-
-    public Double getUserLng() {
-        return userLng;
-    }
-
-    public void setUserLng(Double userLng) {
-        this.userLng = userLng;
-    }
-
-    public Double getCorrectLat() {
-        return correctLat;
-    }
-
-    public void setCorrectLat(Double correctLat) {
-        this.correctLat = correctLat;
-    }
-
-    public Double getCorrectLng() {
-        return correctLng;
-    }
-
-    public void setCorrectLng(Double correctLng) {
-        this.correctLng = correctLng;
+    
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
     public Integer getEarnedScore() {

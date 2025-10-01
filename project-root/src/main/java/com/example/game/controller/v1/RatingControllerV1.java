@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.dto.RatingResponse;
 import com.example.game.service.interfaces.IRatingService;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/ratings")
-public class RatingController {
+public class RatingControllerV1 {
 
     private final IRatingService ratingService;
 
-    public RatingController(IRatingService ratingService) {
+    public RatingControllerV1(IRatingService ratingService) {
         this.ratingService = ratingService;
     }
 

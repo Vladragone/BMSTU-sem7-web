@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.model.GameError;
 import com.example.game.service.interfaces.IGameErrorService;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/game-errors")
-public class GameErrorController {
+public class GameErrorControllerV1 {
 
     private final IGameErrorService gameErrorService;
 
-    public GameErrorController(IGameErrorService gameErrorService) {
+    public GameErrorControllerV1(IGameErrorService gameErrorService) {
         this.gameErrorService = gameErrorService;
     }
 

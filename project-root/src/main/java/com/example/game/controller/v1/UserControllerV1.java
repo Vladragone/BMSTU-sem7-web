@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.dto.RegistrationRequest;
 import com.example.game.model.User;
@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController {
+public class UserControllerV1 {
 
     private final IUserService userService;
     private final IRegistrationService registrationService;
 
-    public UserController(IUserService userService, IRegistrationService registrationService) {
+    public UserControllerV1(IUserService userService, IRegistrationService registrationService) {
         this.userService = userService;
         this.registrationService = registrationService;
     }

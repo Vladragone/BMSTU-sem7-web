@@ -1,4 +1,4 @@
-package com.example.game.controller;
+package com.example.game.controller.v1;
 
 import com.example.game.model.Profile;
 import com.example.game.dto.ProfileUpdateRequest;
@@ -17,13 +17,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/profiles")
-public class ProfileController {
+public class ProfileControllerV1 {
 
     private final IProfileService profileService;
     private final ITokenParser tokenParser;
 
     @Autowired
-    public ProfileController(IProfileService profileService, ITokenParser tokenParser) {
+    public ProfileControllerV1(IProfileService profileService, ITokenParser tokenParser) {
         this.profileService = profileService;
         this.tokenParser = tokenParser;
     }

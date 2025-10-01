@@ -10,12 +10,14 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    private Double lat;
-
     @Column(name = "`lng`")
     private Double lng;
+
+    @Column(name = "lat")
+    private Double lat;
+
+    @Column(name = "name")
+    private String name;
 
     public Location() {}
 
