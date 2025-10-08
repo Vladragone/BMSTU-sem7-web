@@ -9,4 +9,5 @@ public interface ILocationService {
     List<Location> getAllLocations();
     Location addLocation(Location location);
     Location getRandomLocationByName(String name);
+    void deleteLocation(Long id);
 }

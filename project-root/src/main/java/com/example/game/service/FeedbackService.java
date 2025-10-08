@@ -6,6 +6,7 @@ import com.example.game.service.interfaces.IFeedbackService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 @Service
 public class FeedbackService implements IFeedbackService {
@@ -23,5 +24,19 @@ public class FeedbackService implements IFeedbackService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving feedback", e);
         }
+    }
+    @Override
+    public List<Feedback> getAllFeedbacks() {
+        try {
+            return feedbackRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching feedbacks", e);
+        }
+    }
+
+    @Override
+    public Feedback getFeedbackById(Long id) {
+        return feedbackRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Отзыв с id " + id + " не найден"));
     }
 }

@@ -77,4 +77,17 @@ public class LocationControllerV1 {
         }
         return ResponseEntity.ok(randomLocation);
     }
+
+    @Operation(summary = "Удалить локацию по ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Локация успешно удалена"),
+            @ApiResponse(responseCode = "404", description = "Локация не найдена"),
+            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+        locationService.deleteLocation(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

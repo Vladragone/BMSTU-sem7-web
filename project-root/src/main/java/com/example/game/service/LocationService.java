@@ -56,4 +56,19 @@ public class LocationService implements ILocationService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching random location", e);
         }
     }
+
+    @Override
+    public void deleteLocation(Long id) {
+        try {
+            if (!locationRepository.existsById(id)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Локация с id " + id + " не найдена");
+            }
+            locationRepository.deleteById(id);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при удалении локации", e);
+        }
+}
+
 }
