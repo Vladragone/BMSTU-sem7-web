@@ -13,11 +13,15 @@ public class GameSession {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "earned_score", nullable = false)
-    private Integer earnedScore;
+    @ManyToOne
+    @JoinColumn(name = "location_group_id", nullable = false)
+    private LocationGroup locationGroup;
 
-    @Column(name = "location_id", nullable = false)
-    private Long locationId;
+    @Column(name = "total_score", nullable = false)
+    private Integer totalScore = 0;
+
+    @Column(name = "total_rounds", nullable = false)
+    private Integer totalRounds;
 
     public GameSession() {}
 
@@ -37,19 +41,27 @@ public class GameSession {
         this.userId = userId;
     }
 
-    public Long getLocationId() {
-        return locationId;
-    }
-    
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
+    public LocationGroup getLocationGroup() {
+        return locationGroup;
     }
 
-    public Integer getEarnedScore() {
-        return earnedScore;
+    public void setLocationGroup(LocationGroup locationGroup) {
+        this.locationGroup = locationGroup;
     }
 
-    public void setEarnedScore(Integer earnedScore) {
-        this.earnedScore = earnedScore;
+    public Integer getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public Integer getTotalRounds() {
+        return totalRounds;
+    }
+
+    public void setTotalRounds(Integer totalRounds) {
+        this.totalRounds = totalRounds;
     }
 }

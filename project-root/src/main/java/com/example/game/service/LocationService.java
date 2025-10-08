@@ -1,6 +1,7 @@
 package com.example.game.service;
 
 import com.example.game.model.Location;
+import com.example.game.model.LocationGroup;
 import com.example.game.repository.LocationRepository;
 import com.example.game.service.interfaces.ILocationService;
 import org.springframework.http.HttpStatus;
@@ -21,20 +22,20 @@ public class LocationService implements ILocationService {
     }
 
     @Override
-    public List<String> getDistinctLocationNames() {
-        try {
-            return locationRepository.findDistinctNames();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching location names", e);
-        }
-    }
-
-    @Override
     public List<Location> getAllLocations() {
         try {
             return locationRepository.findAll();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching locations", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении списка локаций", e);
+        }
+    }
+
+    @Override
+    public List<Location> getLocationsByGroup(LocationGroup group) {
+        try {
+            return locationRepository.findByGroup(group);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении локаций группы", e);
         }
     }
 
@@ -43,32 +44,26 @@ public class LocationService implements ILocationService {
         try {
             return locationRepository.save(location);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating location", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при создании локации", e);
         }
     }
 
     @Override
-    public Location getRandomLocationByName(String name) {
+    public Location getRandomLocationByGroup(LocationGroup group) {
         try {
-            List<Location> locations = locationRepository.findByName(name);
-            return locations.isEmpty() ? null : locations.get(random.nextInt(locations.size()));
+            List<Location> locations = locationRepository.findByGroup(group);
+            if (locations.isEmpty()) return null;
+            return locations.get(random.nextInt(locations.size()));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching random location", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при выборе случайной локации", e);
         }
     }
 
     @Override
     public void deleteLocation(Long id) {
-        try {
-            if (!locationRepository.existsById(id)) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Локация с id " + id + " не найдена");
-            }
-            locationRepository.deleteById(id);
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при удалении локации", e);
+        if (!locationRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Локация с id " + id + " не найдена");
         }
-}
-
+        locationRepository.deleteById(id);
+    }
 }

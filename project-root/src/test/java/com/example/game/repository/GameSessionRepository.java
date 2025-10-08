@@ -1,52 +1,60 @@
 package com.example.game.repository;
 
-import com.example.game.model.GameSession;
+import com.example.game.model.Location;
+import com.example.game.model.LocationGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class GameSessionRepositoryTest {
+class LocationRepositoryTest {
 
     @Autowired
-    private GameSessionRepository r;
+    private LocationRepository r;
 
-    private GameSession s(Long u, int e, Long l) {
-        GameSession s = new GameSession();
-        s.setUserId(u);
-        s.setEarnedScore(e);
-        s.setLocationId(l);
-        return s;
-    }
+    @Autowired
+    private LocationGroupRepository g;
 
     @Test
     void p1() {
-        GameSession s1 = s(1L, 10, 2L);
-        s1 = r.save(s1);
-        Optional<GameSession> x = r.findById(s1.getId());
-        assertTrue(x.isPresent());
-        assertEquals(10, x.get().getEarnedScore());
-        assertEquals(1L, x.get().getUserId());
-        assertEquals(2L, x.get().getLocationId());
+        LocationGroup g1 = new LocationGroup();
+        g1.setName("Москва");
+        LocationGroup g2 = new LocationGroup();
+        g2.setName("Париж");
+        g.saveAll(List.of(g1, g2));
+
+        Location l1 = new Location();
+        l1.setLat(55.751244);
+        l1.setLng(37.618423);
+        l1.setGroup(g1);
+
+        Location l2 = new Location();
+        l2.setLat(48.8566);
+        l2.setLng(2.3522);
+        l2.setGroup(g2);
+
+        r.saveAll(List.of(l1, l2));
+
+        List<Location> moscow = r.findByGroup(g1);
+        List<Location> paris = r.findByGroup(g2);
+
+        assertEquals(1, moscow.size());
+        assertEquals(1, paris.size());
+        assertEquals(g1.getId(), moscow.get(0).getGroup().getId());
+        assertEquals(g2.getId(), paris.get(0).getGroup().getId());
     }
 
     @Test
     void n1() {
-        Optional<GameSession> x = r.findById(999L);
-        assertTrue(x.isEmpty());
-    }
+        LocationGroup empty = new LocationGroup();
+        empty.setName("Пустая");
+        g.save(empty);
 
-    @Test
-    void p2() {
-        GameSession s1 = s(1L, 5, 3L);
-        GameSession s2 = s(2L, 7, 4L);
-        r.saveAll(List.of(s1, s2));
-        List<GameSession> all = r.findAll();
-        assertEquals(2, all.size());
+        List<Location> x = r.findByGroup(empty);
+        assertTrue(x.isEmpty());
     }
 }

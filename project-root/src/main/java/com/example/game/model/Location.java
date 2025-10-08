@@ -10,23 +10,20 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "`lng`")
-    private Double lng;
-
-    @Column(name = "lat")
+    @Column(nullable = false)
     private Double lat;
 
-    @Column(name = "name")
-    private String name;
+    @Column(nullable = false)
+    private Double lng;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = false)
+    private LocationGroup group;
 
     public Location() {}
 
     public Long getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Double getLat() {
@@ -37,12 +34,12 @@ public class Location {
         return lng;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public LocationGroup getGroup() {
+        return group;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setLat(Double lat) {
@@ -51,5 +48,9 @@ public class Location {
 
     public void setLng(Double lng) {
         this.lng = lng;
+    }
+
+    public void setGroup(LocationGroup group) {
+        this.group = group;
     }
 }

@@ -1,7 +1,9 @@
 package com.example.game.controller.v1;
 
 import com.example.game.model.Location;
+import com.example.game.model.LocationGroup;
 import com.example.game.service.interfaces.ILocationService;
+import com.example.game.service.interfaces.ILocationGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,78 +18,62 @@ import java.util.List;
 public class LocationControllerV1 {
 
     private final ILocationService locationService;
+    private final ILocationGroupService locationGroupService;
 
-    public LocationControllerV1(ILocationService locationService) {
+    public LocationControllerV1(ILocationService locationService, ILocationGroupService locationGroupService) {
         this.locationService = locationService;
+        this.locationGroupService = locationGroupService;
     }
 
-    @Operation(summary = "Получить список всех локаций")
-    @ApiResponses(value = {
+    @Operation(summary = "Получить все локации")
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Локации успешно получены"),
-            @ApiResponse(responseCode = "204", description = "Локации отсутствуют"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+            @ApiResponse(responseCode = "204", description = "Локации отсутствуют")
     })
     @GetMapping
     public ResponseEntity<List<Location>> getAllLocations() {
         List<Location> locations = locationService.getAllLocations();
-        if (locations.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
+        if (locations.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(locations);
     }
 
-    @Operation(summary = "Получить список всех уникальных имён локаций")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Названия успешно получены"),
-            @ApiResponse(responseCode = "204", description = "Названия отсутствуют"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    @Operation(summary = "Получить все локации в группе")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Локации группы успешно получены"),
+            @ApiResponse(responseCode = "404", description = "Группа не найдена")
     })
-    @GetMapping("/names")
-    public ResponseEntity<List<String>> getAllLocationNames() {
-        List<String> names = locationService.getDistinctLocationNames();
-        if (names.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(names);
+    @GetMapping("/group/{groupName}")
+    public ResponseEntity<List<Location>> getLocationsByGroup(@PathVariable String groupName) {
+        LocationGroup group = locationGroupService.getGroupByName(groupName);
+        List<Location> locations = locationService.getLocationsByGroup(group);
+        if (locations.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(locations);
     }
 
-    @Operation(summary = "Создать новую локацию")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Локация успешно создана"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+    @Operation(summary = "Добавить новую локацию")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Локация создана"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные")
     })
     @PostMapping
-    public ResponseEntity<Location> createLocation(@RequestBody Location location) {
-        Location created = locationService.addLocation(location);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<Location> addLocation(@RequestBody Location location) {
+        Location saved = locationService.addLocation(location);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    @Operation(summary = "Получить случайную локацию по имени")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Локация найдена"),
-            @ApiResponse(responseCode = "404", description = "Локации с таким именем не существует"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
-    })
-    @GetMapping("/random")
-    public ResponseEntity<Location> getRandomLocation(@RequestParam String name) {
-        Location randomLocation = locationService.getRandomLocationByName(name);
-        if (randomLocation == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(randomLocation);
+    @Operation(summary = "Получить случайную локацию по группе")
+    @GetMapping("/random/{groupName}")
+    public ResponseEntity<Location> getRandomByGroup(@PathVariable String groupName) {
+        LocationGroup group = locationGroupService.getGroupByName(groupName);
+        Location random = locationService.getRandomLocationByGroup(group);
+        if (random == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(random);
     }
 
-    @Operation(summary = "Удалить локацию по ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Локация успешно удалена"),
-            @ApiResponse(responseCode = "404", description = "Локация не найдена"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
-    })
+    @Operation(summary = "Удалить локацию")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
         locationService.deleteLocation(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/gamesessions")
 public class GameSessionControllerV1 {
@@ -20,14 +22,50 @@ public class GameSessionControllerV1 {
     }
 
     @Operation(summary = "Создать новую игровую сессию")
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Игровая сессия успешно создана"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "500", description = "Ошибка сервера")
+            @ApiResponse(responseCode = "500", description = "Ошибка при сохранении сессии")
     })
     @PostMapping
     public ResponseEntity<GameSession> createGameSession(@RequestBody GameSession gameSession) {
-        GameSession savedGameSession = gameSessionService.saveGameSession(gameSession);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedGameSession);
+        GameSession saved = gameSessionService.saveGameSession(gameSession);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
+    @Operation(summary = "Получить все сессии пользователя")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Сессии успешно получены"),
+            @ApiResponse(responseCode = "204", description = "Сессий нет")
+    })
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<GameSession>> getUserSessions(@PathVariable Long userId) {
+        List<GameSession> sessions = gameSessionService.getSessionsByUser(userId);
+        if (sessions.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(sessions);
+    }
+
+    @Operation(summary = "Получить сессию по ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Сессия найдена"),
+            @ApiResponse(responseCode = "404", description = "Сессия не найдена")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<GameSession> getSessionById(@PathVariable Long id) {
+        return gameSessionService.getSessionById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Удалить игровую сессию")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Сессия удалена"),
+            @ApiResponse(responseCode = "404", description = "Сессия не найдена")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
+        gameSessionService.deleteSession(id);
+        return ResponseEntity.noContent().build();
     }
 }
