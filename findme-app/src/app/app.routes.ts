@@ -8,7 +8,6 @@ import { GameSettingsComponent } from './pages/game-settings/game-settings.compo
 import { GameComponent } from './pages/game/game.component';
 import { GameResultComponent } from './pages/game-result/game-result.component';
 import { FaqComponent } from './pages/faq/faq.component';
-import { StressComponent } from './pages/stress/stress.component';
 
 export const routes: Routes = [
   { path: '', component: StartComponent },
@@ -20,5 +19,4 @@ export const routes: Routes = [
   { path: 'game', component: GameComponent},
   { path: 'game-result', component: GameResultComponent},
   { path: 'faq', component: FaqComponent },
-  { path: 'stress', component: StressComponent }
 ];

@@ -1,0 +1,26 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('/assets/world.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+}
+
+.warn-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+  font-weight: 500;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.snackbar-success {
+  background-color: #4caf50;
+  color: #fff;
+  font-weight: bold;
+}
