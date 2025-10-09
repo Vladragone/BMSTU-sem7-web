@@ -1,0 +1,81 @@
+.overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  background: transparent;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.settings-box {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  margin: 20px 0;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.select-box {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.start-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 0;
+  font-size: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.start-button:hover {
+  background-color: #3e8e41;
+}
+
+.back-button {
+  background-color: #f44336;
+  color: white;
+  padding: 12px 0;
+  font-size: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #d32f2f;
+}

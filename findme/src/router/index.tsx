@@ -5,6 +5,8 @@ import FaqPage from "../pages/FaqPage/FaqPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import RatingPage from "../pages/RatingPage/Ratingpage";
+import GameSettingsPage from "../pages/GameSettingsPage/GameSettingsPage";
 
 const AppRouter: React.FC = () => {
   return (
@@ -13,9 +15,10 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<StartPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/game-settings" element={<div>Game settings</div>} />
+        <Route path="/game-settings" element={<GameSettingsPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/rating" element={<RatingPage />} />
       </Routes>
     </BrowserRouter>
   );
