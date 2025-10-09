@@ -69,14 +69,6 @@ public class LocationControllerV1 {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(saved));
     }
 
-    @Operation(summary = "Получить случайную локацию по ID группы")
-    @GetMapping("/random/{groupId}")
-    public ResponseEntity<LocationResponseDTO> getRandomByGroup(@PathVariable Long groupId) {
-        Location random = locationService.getRandomLocationByGroupId(groupId);
-        if (random == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(toResponseDto(random));
-    }
-
     @Operation(summary = "Удалить локацию")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
