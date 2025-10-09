@@ -1,6 +1,6 @@
 package com.example.game.controller.v1;
 
-import com.example.game.dto.RatingResponse;
+import com.example.game.dto.RatingResponseDTO;
 import com.example.game.service.interfaces.IRatingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,24 +20,23 @@ public class RatingControllerV1 {
     }
 
     @Operation(summary = "Получить рейтинг игроков")
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Рейтинг успешно получен"),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
             @ApiResponse(responseCode = "401", description = "Неавторизован"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден в рейтинге"),
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
     @GetMapping
-    public ResponseEntity<RatingResponse> getRatings(
+    public ResponseEntity<RatingResponseDTO> getRatings(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @RequestParam(required = false, defaultValue = "points") String sortBy,
-            @RequestParam(required = false, defaultValue = "3") int limit) {
+            @RequestParam(defaultValue = "points") String sortBy,
+            @RequestParam(defaultValue = "10") int limit) {
 
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        RatingResponse result = ratingService.getSortedRatingAndRank(token, sortBy, limit);
+        RatingResponseDTO result = ratingService.getSortedRatingAndRank(token, sortBy, limit);
         return ResponseEntity.ok(result);
     }
 }

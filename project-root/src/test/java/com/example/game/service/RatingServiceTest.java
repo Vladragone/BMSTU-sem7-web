@@ -1,6 +1,6 @@
 package com.example.game.service;
 
-import com.example.game.dto.RatingResponse;
+import com.example.game.dto.RatingResponseDTO;
 import com.example.game.model.Profile;
 import com.example.game.model.User;
 import com.example.game.repository.ProfileRepository;
@@ -48,10 +48,12 @@ class RatingServiceTest {
         when(t.getUsername("T")).thenReturn("U1");
         List<Profile> list = List.of(p("U1", 10, 2), p("U2", 5, 3));
         when(r.findAll()).thenReturn(list);
-        RatingResponse res = s.getSortedRatingAndRank("T", "score", 2);
+
+        RatingResponseDTO res = s.getSortedRatingAndRank("T", "score", 2);
+
         assertNotNull(res);
-        assertEquals(2, res.getTop().size());
-        assertEquals(1, res.getYourRank());
+        assertEquals(2, res.getTopUsers().size());
+        assertEquals(1, res.getCurrentUserRank());
         assertEquals("score", res.getSortBy());
     }
 
@@ -60,9 +62,11 @@ class RatingServiceTest {
         when(t.getUsername("T")).thenReturn("U1");
         List<Profile> list = List.of(p("U1", 10, 2), p("U2", 5, 3));
         when(r.findAll()).thenReturn(list);
-        RatingResponse res = s.getSortedRatingAndRank("T", "games", 2);
+
+        RatingResponseDTO res = s.getSortedRatingAndRank("T", "games", 2);
+
         assertNotNull(res);
-        assertEquals(2, res.getTop().size());
+        assertEquals(2, res.getTopUsers().size());
         assertEquals("games", res.getSortBy());
     }
 
@@ -70,7 +74,9 @@ class RatingServiceTest {
     void n1() {
         when(t.getUsername("T")).thenReturn("U1");
         when(r.findAll()).thenReturn(List.of());
-        assertThrows(ResponseStatusException.class, () -> s.getSortedRatingAndRank("T", "score", 2));
+
+        assertThrows(ResponseStatusException.class,
+                () -> s.getSortedRatingAndRank("T", "score", 2));
     }
 
     @Test
@@ -78,12 +84,16 @@ class RatingServiceTest {
         when(t.getUsername("T")).thenReturn("U3");
         List<Profile> list = List.of(p("U1", 10, 2), p("U2", 5, 3));
         when(r.findAll()).thenReturn(list);
-        assertThrows(ResponseStatusException.class, () -> s.getSortedRatingAndRank("T", "score", 2));
+
+        assertThrows(ResponseStatusException.class,
+                () -> s.getSortedRatingAndRank("T", "score", 2));
     }
 
     @Test
     void n3() {
         when(t.getUsername("T")).thenThrow(new RuntimeException());
-        assertThrows(ResponseStatusException.class, () -> s.getSortedRatingAndRank("T", "score", 2));
+
+        assertThrows(ResponseStatusException.class,
+                () -> s.getSortedRatingAndRank("T", "score", 2));
     }
 }

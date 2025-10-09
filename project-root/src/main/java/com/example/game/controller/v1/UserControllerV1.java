@@ -1,6 +1,7 @@
 package com.example.game.controller.v1;
 
-import com.example.game.dto.RegistrationRequest;
+import com.example.game.dto.UserRequestDTO;
+import com.example.game.dto.UserResponseDTO;
 import com.example.game.model.User;
 import com.example.game.service.interfaces.IRegistrationService;
 import com.example.game.service.interfaces.IUserService;
@@ -24,30 +25,39 @@ public class UserControllerV1 {
     }
 
     @Operation(summary = "Регистрация нового пользователя")
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован"),
             @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "409", description = "Пользователь с таким именем или почтой уже существует"),
+            @ApiResponse(responseCode = "409", description = "Пользователь уже существует"),
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
     @PostMapping
-    public ResponseEntity<User> register(@RequestBody RegistrationRequest request) {
-        User createdUser = registrationService.register(request);
+    public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO request) {
+        UserResponseDTO createdUser = registrationService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @Operation(summary = "Получить данные пользователя по username")
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Пользователь найден"),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
             @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     })
     @GetMapping("/{username}")
-    public ResponseEntity<User> getUser(@PathVariable String username) {
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable String username) {
         User user = userService.findUserByUsername(username);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(toDto(user));
+    }
+
+    private UserResponseDTO toDto(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }

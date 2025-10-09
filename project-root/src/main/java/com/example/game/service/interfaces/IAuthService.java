@@ -1,8 +1,8 @@
 package com.example.game.service.interfaces;
 
-import com.example.game.dto.LoginRequest;
-import com.example.game.dto.TokenResponse;
+import com.example.game.dto.LoginRequestDTO;
+import com.example.game.dto.TokenResponseDTO;
 
 public interface IAuthService {
-    TokenResponse authenticateUser(LoginRequest loginRequest);
+    TokenResponseDTO authenticateUser(LoginRequestDTO req);
 }

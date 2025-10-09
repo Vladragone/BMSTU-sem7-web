@@ -1,6 +1,6 @@
 package com.example.game.service;
 
-import com.example.game.dto.ProfileUpdateRequest;
+import com.example.game.dto.ProfileRequestDTO;
 import com.example.game.model.Profile;
 import com.example.game.repository.ProfileRepository;
 import com.example.game.service.interfaces.IProfileService;
@@ -29,7 +29,7 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public Profile updateProfile(ProfileUpdateRequest updates, String username) {
+    public Profile updateProfile(ProfileRequestDTO updates, String username) {
         try {
             Optional<Profile> optionalProfile = profileRepository.findByUserUsername(username);
             if (optionalProfile.isEmpty()) {

@@ -23,7 +23,7 @@ public class GameErrorService implements IGameErrorService {
         try {
             return gameErrorRepository.findAll();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching game errors", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении списка ошибок");
         }
     }
 }

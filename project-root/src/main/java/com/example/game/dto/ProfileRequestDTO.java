@@ -1,6 +1,6 @@
 package com.example.game.dto;
 
-public class ProfileUpdateRequest {
+public class ProfileRequestDTO {
     private Integer score;
 
     public Integer getScore() {

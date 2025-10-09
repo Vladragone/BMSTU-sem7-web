@@ -1,13 +1,12 @@
 package com.example.game.service.impl;
 
-import com.example.game.dto.FaqUpdateRequest;
+import com.example.game.dto.FaqUpdateDTO;
 import com.example.game.model.Faq;
 import com.example.game.repository.FaqRepository;
 import com.example.game.service.interfaces.IFaqService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +21,11 @@ public class FaqService implements IFaqService {
 
     @Override
     public List<Faq> getAllFaqs() {
-        return faqRepository.findAll();
+        try {
+            return faqRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении FAQ");
+        }
     }
 
     @Override
@@ -35,43 +38,31 @@ public class FaqService implements IFaqService {
         try {
             return faqRepository.save(faq);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving FAQ", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при сохранении FAQ");
         }
     }
 
     @Override
-    public Faq updateFaq(Long id, FaqUpdateRequest updates) {
+    public Faq updateFaq(Long id, FaqUpdateDTO updates) {
         return faqRepository.findById(id).map(existing -> {
-            if (updates.getQuestion() != null) {
-                existing.setQuestion(updates.getQuestion());
-            }
-            if (updates.getAnswer() != null) {
-                existing.setAnswer(updates.getAnswer());
-            }
+            if (updates.getQuestion() != null) existing.setQuestion(updates.getQuestion());
+            if (updates.getAnswer() != null) existing.setAnswer(updates.getAnswer());
             try {
                 return faqRepository.save(existing);
             } catch (Exception e) {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Error updating FAQ with id=" + id,
-                        e
-                );
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при обновлении FAQ");
             }
-        }).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "FAQ with id=" + id + " not found"
-        ));
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "FAQ с id " + id + " не найден"));
     }
 
     @Override
     public void deleteFaq(Long id) {
-        if (!faqRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "FAQ with id=" + id + " not found");
-        }
+        if (!faqRepository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "FAQ с id " + id + " не найден");
         try {
             faqRepository.deleteById(id);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting FAQ", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при удалении FAQ");
         }
     }
 }

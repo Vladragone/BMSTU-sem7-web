@@ -1,11 +1,13 @@
 package com.example.game.dto;
 
-public class UserRegistrationRequest {
+public class UserRequestDTO {
     private String username;
     private String email;
     private String password;
 
-    public UserRegistrationRequest(String username, String email, String password) {
+    public UserRequestDTO() {}
+
+    public UserRequestDTO(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;

@@ -1,9 +1,9 @@
 package com.example.game.controller.v1;
 
+import com.example.game.dto.GameRoundRequestDTO;
+import com.example.game.dto.GameRoundResponseDTO;
 import com.example.game.model.GameRound;
-import com.example.game.model.GameSession;
 import com.example.game.service.interfaces.IGameRoundService;
-import com.example.game.service.interfaces.IGameSessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,43 +12,63 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/gamerounds")
 public class GameRoundControllerV1 {
 
     private final IGameRoundService gameRoundService;
-    private final IGameSessionService gameSessionService;
 
-    public GameRoundControllerV1(IGameRoundService gameRoundService, IGameSessionService gameSessionService) {
+    public GameRoundControllerV1(IGameRoundService gameRoundService) {
         this.gameRoundService = gameRoundService;
-        this.gameSessionService = gameSessionService;
     }
 
     @Operation(summary = "Создать новый раунд")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Раунд успешно создан"),
+            @ApiResponse(responseCode = "500", description = "Ошибка при сохранении раунда")
+    })
     @PostMapping
-    public ResponseEntity<GameRound> createRound(@RequestBody GameRound round) {
-        GameRound saved = gameRoundService.saveRound(round);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<GameRoundResponseDTO> createRound(@RequestBody GameRoundRequestDTO dto) {
+        GameRound saved = gameRoundService.createFromDto(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(saved));
     }
 
-    @Operation(summary = "Получить все раунды по сессии")
+    @Operation(summary = "Получить все раунды по ID сессии")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Раунды успешно получены"),
+            @ApiResponse(responseCode = "204", description = "Раунды отсутствуют")
+    })
     @GetMapping("/session/{sessionId}")
-    public ResponseEntity<List<GameRound>> getRoundsBySession(@PathVariable Long sessionId) {
-        GameSession session = gameSessionService.getSessionById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Сессия не найдена"));
-        List<GameRound> rounds = gameRoundService.getRoundsBySession(session);
+    public ResponseEntity<List<GameRoundResponseDTO>> getRoundsBySession(@PathVariable Long sessionId) {
+        List<GameRound> rounds = gameRoundService.getRoundsBySessionId(sessionId);
         if (rounds.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(rounds);
+
+        List<GameRoundResponseDTO> dtos = rounds.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Получить текущий раунд в сессии")
+    @Operation(summary = "Получить текущий (последний) раунд по ID сессии")
     @GetMapping("/session/{sessionId}/current")
-    public ResponseEntity<GameRound> getCurrentRound(@PathVariable Long sessionId) {
-        GameSession session = gameSessionService.getSessionById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Сессия не найдена"));
-        GameRound round = gameRoundService.getCurrentRound(session);
+    public ResponseEntity<GameRoundResponseDTO> getCurrentRound(@PathVariable Long sessionId) {
+        GameRound round = gameRoundService.getCurrentRoundBySessionId(sessionId);
         if (round == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(round);
+        return ResponseEntity.ok(toResponseDto(round));
+    }
+
+    private GameRoundResponseDTO toResponseDto(GameRound entity) {
+        GameRoundResponseDTO dto = new GameRoundResponseDTO();
+        dto.setId(entity.getId());
+        dto.setSessionId(entity.getSession().getId());
+        dto.setLocationId(entity.getLocation().getId());
+        dto.setGuessLat(entity.getGuessLat());
+        dto.setGuessLng(entity.getGuessLng());
+        dto.setScore(entity.getScore());
+        dto.setRoundNumber(entity.getRoundNumber());
+        return dto;
     }
 }

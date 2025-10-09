@@ -1,6 +1,7 @@
 package com.example.game.service;
 
-import com.example.game.dto.RegistrationRequest;
+import com.example.game.dto.UserRequestDTO;
+import com.example.game.dto.UserResponseDTO;
 import com.example.game.model.Profile;
 import com.example.game.model.User;
 import com.example.game.repository.ProfileRepository;
@@ -31,7 +32,7 @@ public class RegistrationService implements IRegistrationService {
     }
 
     @Override
-    public User register(RegistrationRequest request) {
+    public UserResponseDTO register(UserRequestDTO request) {
         try {
             if (userService.existsByUsername(request.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким именем уже существует");
@@ -54,7 +55,12 @@ public class RegistrationService implements IRegistrationService {
             Profile profile = new Profile(savedUser, LocalDateTime.now());
             profileRepository.save(profile);
 
-            return savedUser;
+            return new UserResponseDTO(
+                    savedUser.getId(),
+                    savedUser.getUsername(),
+                    savedUser.getEmail(),
+                    savedUser.getRole()
+            );
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {

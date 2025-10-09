@@ -1,6 +1,7 @@
 package com.example.game.service.interfaces;
 
 import com.example.game.model.LocationGroup;
+
 import java.util.List;
 
 public interface ILocationGroupService {

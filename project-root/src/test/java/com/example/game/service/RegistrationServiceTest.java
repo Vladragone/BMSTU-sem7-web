@@ -1,6 +1,7 @@
 package com.example.game.service;
 
-import com.example.game.dto.RegistrationRequest;
+import com.example.game.dto.UserRequestDTO;
+import com.example.game.dto.UserResponseDTO;
 import com.example.game.model.Profile;
 import com.example.game.model.User;
 import com.example.game.repository.ProfileRepository;
@@ -37,17 +38,20 @@ class RegistrationServiceTest {
 
     @Test
     void p1() {
-        RegistrationRequest r = new RegistrationRequest();
+        UserRequestDTO r = new UserRequestDTO();
         r.setUsername("A");
         r.setEmail("a@a");
         r.setPassword("p");
         when(us.existsByUsername("A")).thenReturn(false);
         when(us.existsByEmail("a@a")).thenReturn(false);
         User u = new User();
+        u.setId(1L);
         u.setUsername("A");
+        u.setEmail("a@a");
+        u.setRole("user");
         when(ur.save(any())).thenReturn(u);
         when(pr.save(any(Profile.class))).thenReturn(null);
-        User x = s.register(r);
+        UserResponseDTO x = s.register(r);
         assertEquals("A", x.getUsername());
         verify(ur, times(1)).save(any());
         verify(pr, times(1)).save(any());
@@ -55,7 +59,7 @@ class RegistrationServiceTest {
 
     @Test
     void n1() {
-        RegistrationRequest r = new RegistrationRequest();
+        UserRequestDTO r = new UserRequestDTO();
         r.setUsername("A");
         r.setEmail("a@a");
         when(us.existsByUsername("A")).thenReturn(true);
@@ -64,7 +68,7 @@ class RegistrationServiceTest {
 
     @Test
     void n2() {
-        RegistrationRequest r = new RegistrationRequest();
+        UserRequestDTO r = new UserRequestDTO();
         r.setUsername("A");
         r.setEmail("a@a");
         when(us.existsByUsername("A")).thenReturn(false);
@@ -74,7 +78,7 @@ class RegistrationServiceTest {
 
     @Test
     void n3() {
-        RegistrationRequest r = new RegistrationRequest();
+        UserRequestDTO r = new UserRequestDTO();
         r.setUsername("A");
         r.setEmail("a@a");
         r.setPassword("p");

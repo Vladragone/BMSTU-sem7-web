@@ -1,6 +1,6 @@
 package com.example.game.service;
 
-import com.example.game.dto.ProfileUpdateRequest;
+import com.example.game.dto.ProfileRequestDTO;
 import com.example.game.model.Profile;
 import com.example.game.model.User;
 import com.example.game.repository.ProfileRepository;
@@ -64,7 +64,7 @@ class ProfileServiceTest {
         p.setUser(u);
         when(r.findByUserUsername("A")).thenReturn(Optional.of(p));
         when(r.save(any())).thenReturn(p);
-        ProfileUpdateRequest uReq = new ProfileUpdateRequest();
+        ProfileRequestDTO uReq = new ProfileRequestDTO();
         uReq.setScore(10);
         Profile x = s.updateProfile(uReq, "A");
         assertEquals(15, x.getScore());
@@ -74,7 +74,7 @@ class ProfileServiceTest {
     @Test
     void n3() {
         when(r.findByUserUsername("A")).thenReturn(Optional.empty());
-        ProfileUpdateRequest uReq = new ProfileUpdateRequest();
+        ProfileRequestDTO uReq = new ProfileRequestDTO();
         uReq.setScore(10);
         Profile x = s.updateProfile(uReq, "A");
         assertNull(x);
@@ -83,7 +83,7 @@ class ProfileServiceTest {
     @Test
     void n4() {
         when(r.findByUserUsername("A")).thenThrow(new RuntimeException());
-        ProfileUpdateRequest uReq = new ProfileUpdateRequest();
+        ProfileRequestDTO uReq = new ProfileRequestDTO();
         assertThrows(ResponseStatusException.class, () -> s.updateProfile(uReq, "A"));
     }
 }

@@ -1,6 +1,7 @@
 package com.example.game.service;
 
-import com.example.game.dto.RatingResponse;
+import com.example.game.dto.RatingResponseDTO;
+import com.example.game.dto.RatingUserDTO;
 import com.example.game.model.Profile;
 import com.example.game.repository.ProfileRepository;
 import com.example.game.service.interfaces.IRatingService;
@@ -27,7 +28,7 @@ public class RatingService implements IRatingService {
 
     @Override
     @Transactional(readOnly = true)
-    public RatingResponse getSortedRatingAndRank(String token, String sortBy, int limit) {
+    public RatingResponseDTO getSortedRatingAndRank(String token, String sortBy, int limit) {
         try {
             String currentUsername = tokenParser.getUsername(token);
             List<Profile> profiles = profileRepository.findAll();
@@ -35,13 +36,17 @@ public class RatingService implements IRatingService {
                 throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No profiles found");
             }
 
-            Comparator<Profile> comparator = getComparator(sortBy);
+            Comparator<Profile> comparator = "games".equals(sortBy)
+                    ? Comparator.comparingInt(Profile::getGameNum)
+                    : Comparator.comparingInt(Profile::getScore);
+
             List<Profile> sortedProfiles = profiles.stream()
                     .sorted(comparator.reversed())
                     .collect(Collectors.toList());
 
-            List<Profile> top = sortedProfiles.stream()
+            List<RatingUserDTO> topUsers = sortedProfiles.stream()
                     .limit(limit)
+                    .map(this::toDto)
                     .collect(Collectors.toList());
 
             int rank = findUserRank(sortedProfiles, currentUsername);
@@ -49,7 +54,12 @@ public class RatingService implements IRatingService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found in rating");
             }
 
-            return new RatingResponse(top, rank, sortBy);
+            // Добавляем ранги в DTO (по позиции)
+            for (int i = 0; i < topUsers.size(); i++) {
+                topUsers.get(i).setRank(i + 1);
+            }
+
+            return new RatingResponseDTO(topUsers, rank, sortBy);
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -57,16 +67,21 @@ public class RatingService implements IRatingService {
         }
     }
 
-    private Comparator<Profile> getComparator(String sortBy) {
-        return "games".equals(sortBy)
-                ? Comparator.comparingInt(Profile::getGameNum)
-                : Comparator.comparingInt(Profile::getScore);
+    private RatingUserDTO toDto(Profile profile) {
+        return new RatingUserDTO(
+                profile.getUser().getUsername(),
+                profile.getScore(),
+                profile.getGameNum(),
+                0
+        );
     }
 
     private int findUserRank(List<Profile> profiles, String username) {
-        return profiles.stream()
-                .map(profile -> profile.getUser().getUsername())
-                .toList()
-                .indexOf(username) + 1;
+        for (int i = 0; i < profiles.size(); i++) {
+            if (profiles.get(i).getUser().getUsername().equals(username)) {
+                return i + 1;
+            }
+        }
+        return -1;
     }
 }

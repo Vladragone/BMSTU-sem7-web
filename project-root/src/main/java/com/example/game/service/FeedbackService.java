@@ -22,15 +22,16 @@ public class FeedbackService implements IFeedbackService {
         try {
             return feedbackRepository.save(feedback);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving feedback", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при сохранении отзыва");
         }
     }
+
     @Override
     public List<Feedback> getAllFeedbacks() {
         try {
             return feedbackRepository.findAll();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching feedbacks", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении отзывов");
         }
     }
 

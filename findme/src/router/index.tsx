@@ -5,7 +5,7 @@ import FaqPage from "../pages/FaqPage/FaqPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import RatingPage from "../pages/RatingPage/Ratingpage";
+import RatingPage from "../pages/RatingPage/RatingPage";
 import GameSettingsPage from "../pages/GameSettingsPage/GameSettingsPage";
 
 const AppRouter: React.FC = () => {

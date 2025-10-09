@@ -1,6 +1,6 @@
 package com.example.game.service.impl;
 
-import com.example.game.dto.FaqUpdateRequest;
+import com.example.game.dto.FaqUpdateDTO;
 import com.example.game.model.Faq;
 import com.example.game.repository.FaqRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +55,7 @@ class FaqServiceTest {
         f.setQuestion("Q");
         f.setAnswer("A");
         when(r.findById(1L)).thenReturn(Optional.of(f));
-        FaqUpdateRequest u = new FaqUpdateRequest();
+        FaqUpdateDTO u = new FaqUpdateDTO();
         u.setAnswer("B");
         when(r.save(any())).thenReturn(f);
         Faq x = s.updateFaq(1L, u);
@@ -65,7 +65,7 @@ class FaqServiceTest {
     @Test
     void n2() {
         when(r.findById(1L)).thenReturn(Optional.empty());
-        FaqUpdateRequest u = new FaqUpdateRequest();
+        FaqUpdateDTO u = new FaqUpdateDTO();
         assertThrows(ResponseStatusException.class, () -> s.updateFaq(1L, u));
     }
 

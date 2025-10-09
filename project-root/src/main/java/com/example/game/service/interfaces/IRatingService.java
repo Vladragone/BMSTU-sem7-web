@@ -1,7 +1,7 @@
 package com.example.game.service.interfaces;
 
-import com.example.game.dto.RatingResponse;
+import com.example.game.dto.RatingResponseDTO;
 
 public interface IRatingService {
-    RatingResponse getSortedRatingAndRank(String token, String sortBy, int limit);
+    RatingResponseDTO getSortedRatingAndRank(String token, String sortBy, int limit);
 }

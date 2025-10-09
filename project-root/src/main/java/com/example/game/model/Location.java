@@ -16,41 +16,21 @@ public class Location {
     @Column(nullable = false)
     private Double lng;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private LocationGroup group;
 
     public Location() {}
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Double getLat() {
-        return lat;
-    }
+    public Double getLat() { return lat; }
+    public void setLat(Double lat) { this.lat = lat; }
 
-    public Double getLng() {
-        return lng;
-    }
+    public Double getLng() { return lng; }
+    public void setLng(Double lng) { this.lng = lng; }
 
-    public LocationGroup getGroup() {
-        return group;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setLat(Double lat) {
-        this.lat = lat;
-    }
-
-    public void setLng(Double lng) {
-        this.lng = lng;
-    }
-
-    public void setGroup(LocationGroup group) {
-        this.group = group;
-    }
+    public LocationGroup getGroup() { return group; }
+    public void setGroup(LocationGroup group) { this.group = group; }
 }

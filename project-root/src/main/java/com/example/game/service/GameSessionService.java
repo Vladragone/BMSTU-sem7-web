@@ -1,7 +1,10 @@
 package com.example.game.service;
 
+import com.example.game.dto.GameSessionRequestDTO;
 import com.example.game.model.GameSession;
+import com.example.game.model.LocationGroup;
 import com.example.game.repository.GameSessionRepository;
+import com.example.game.repository.LocationGroupRepository;
 import com.example.game.service.interfaces.IGameSessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,26 @@ import java.util.Optional;
 public class GameSessionService implements IGameSessionService {
 
     private final GameSessionRepository gameSessionRepository;
+    private final LocationGroupRepository locationGroupRepository;
 
-    public GameSessionService(GameSessionRepository gameSessionRepository) {
+    public GameSessionService(GameSessionRepository gameSessionRepository,
+                              LocationGroupRepository locationGroupRepository) {
         this.gameSessionRepository = gameSessionRepository;
+        this.locationGroupRepository = locationGroupRepository;
+    }
+
+    @Override
+    public GameSession createFromDto(GameSessionRequestDTO dto) {
+        LocationGroup group = locationGroupRepository.findById(dto.getLocationGroupId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "LocationGroup не найден"));
+
+        GameSession session = new GameSession();
+        session.setUserId(dto.getUserId());
+        session.setLocationGroup(group);
+        session.setTotalRounds(dto.getTotalRounds());
+        session.setTotalScore(0);
+
+        return gameSessionRepository.save(session);
     }
 
     @Override

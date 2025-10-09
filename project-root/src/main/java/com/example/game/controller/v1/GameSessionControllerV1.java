@@ -1,5 +1,7 @@
 package com.example.game.controller.v1;
 
+import com.example.game.dto.GameSessionRequestDTO;
+import com.example.game.dto.GameSessionResponseDTO;
 import com.example.game.model.GameSession;
 import com.example.game.service.interfaces.IGameSessionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/gamesessions")
@@ -27,9 +30,9 @@ public class GameSessionControllerV1 {
             @ApiResponse(responseCode = "500", description = "Ошибка при сохранении сессии")
     })
     @PostMapping
-    public ResponseEntity<GameSession> createGameSession(@RequestBody GameSession gameSession) {
-        GameSession saved = gameSessionService.saveGameSession(gameSession);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<GameSessionResponseDTO> createGameSession(@RequestBody GameSessionRequestDTO dto) {
+        GameSession created = gameSessionService.createFromDto(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(created));
     }
 
     @Operation(summary = "Получить все сессии пользователя")
@@ -38,12 +41,15 @@ public class GameSessionControllerV1 {
             @ApiResponse(responseCode = "204", description = "Сессий нет")
     })
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GameSession>> getUserSessions(@PathVariable Long userId) {
+    public ResponseEntity<List<GameSessionResponseDTO>> getUserSessions(@PathVariable Long userId) {
         List<GameSession> sessions = gameSessionService.getSessionsByUser(userId);
         if (sessions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(sessions);
+        List<GameSessionResponseDTO> dtos = sessions.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Получить сессию по ID")
@@ -52,9 +58,9 @@ public class GameSessionControllerV1 {
             @ApiResponse(responseCode = "404", description = "Сессия не найдена")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<GameSession> getSessionById(@PathVariable Long id) {
+    public ResponseEntity<GameSessionResponseDTO> getSessionById(@PathVariable Long id) {
         return gameSessionService.getSessionById(id)
-                .map(ResponseEntity::ok)
+                .map(session -> ResponseEntity.ok(toResponseDto(session)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -67,5 +73,15 @@ public class GameSessionControllerV1 {
     public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
         gameSessionService.deleteSession(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private GameSessionResponseDTO toResponseDto(GameSession entity) {
+        GameSessionResponseDTO dto = new GameSessionResponseDTO();
+        dto.setId(entity.getId());
+        dto.setUserId(entity.getUserId());
+        dto.setLocationGroupId(entity.getLocationGroup().getId());
+        dto.setTotalScore(entity.getTotalScore());
+        dto.setTotalRounds(entity.getTotalRounds());
+        return dto;
     }
 }
