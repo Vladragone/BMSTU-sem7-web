@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Документация проекта</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 40px; line-height: 1.6; background: #fff; color: #222; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    h1, h2, h3 { color: #0078d4; }
+  </style>
+</head>
+<body>
+  <h1>Документация WebLab #1</h1>
+  <div id="content">Загрузка README...</div>
+  <script>
+    fetch('/documentation/Readme.md')
+      .then(r => r.text())
+      .then(t => document.getElementById('content').innerHTML = marked.parse(t))
+      .catch(() => document.getElementById('content').innerText = 'Не удалось загрузить Readme.md');
+  </script>
+</body>
+</html>
