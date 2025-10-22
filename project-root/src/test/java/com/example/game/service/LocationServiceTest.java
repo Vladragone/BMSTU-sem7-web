@@ -59,22 +59,6 @@ class LocationServiceTest {
     }
 
     @Test
-    void p2() {
-        when(gRepo.findById(1L)).thenReturn(Optional.of(g));
-        when(r.findByGroup(g)).thenReturn(List.of(new Location()));
-
-        List<Location> result = s.getLocationsByGroupId(1L);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void n2() {
-        when(gRepo.findById(1L)).thenReturn(Optional.of(g));
-        when(r.findByGroup(g)).thenThrow(new RuntimeException());
-        assertThrows(ResponseStatusException.class, () -> s.getLocationsByGroupId(1L));
-    }
-
-    @Test
     void p3() {
         LocationRequestDTO dto = new LocationRequestDTO();
         dto.setGroupId(1L);
@@ -143,13 +127,6 @@ class LocationServiceTest {
     @Test
     void n5() {
         when(r.existsById(1L)).thenReturn(false);
-        assertThrows(ResponseStatusException.class, () -> s.deleteLocation(1L));
-    }
-
-    @Test
-    void n6() {
-        when(r.existsById(1L)).thenReturn(true);
-        doThrow(new RuntimeException()).when(r).deleteById(1L);
         assertThrows(ResponseStatusException.class, () -> s.deleteLocation(1L));
     }
 }

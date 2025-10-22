@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  background: linear-gradient(270deg, #ff00c8, #00fff9, #00ff40, #ffd900);
+  background-size: 800% 800%;
+  animation: bgShift 8s ease infinite;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 26px;
+  margin-top: 60px;
+  animation: flash 1.2s infinite;
+  text-shadow: 0 0 15px #ff00ff, 0 0 30px #00ffff;
+}
+
+@keyframes flash {
+  0%, 100% { color: #fff; }
+  50% { color: #ff00ff; }
+}
+
+#statusBox {
+  display: inline-block;
+  margin-top: 40px;
+  padding: 25px;
+  background: rgba(0,0,0,0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 25px 10px rgba(255,255,255,0.4);
+  min-width: 350px;
+  font-size: 12px;
+}
+
+.rainbow-border {
+  border: 5px solid;
+  border-image: linear-gradient(45deg, #ff0000, #ff7b00, #ffee00, #00ff44, #00ffee, #0078ff, #b400ff) 1;
+  animation: borderShift 4s linear infinite;
+}
+
+@keyframes borderShift {
+  0% { border-image-source: linear-gradient(45deg, #ff0000, #ff7b00, #ffee00, #00ff44, #00ffee, #0078ff, #b400ff); }
+  100% { border-image-source: linear-gradient(405deg, #ff0000, #ff7b00, #ffee00, #00ff44, #00ffee, #0078ff, #b400ff); }
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 10px;
+  text-shadow: 0 0 8px #000;
+}
+
+.cat {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 120px;
+  transform: rotate(10deg);
+}
+
+.logos {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.nginx-logo {
+  width: 120px;
+  animation: dance 1.5s infinite alternate ease-in-out;
+  filter: drop-shadow(0 0 15px #00ff77);
+}
+
+.pg-logo {
+  width: 100px;
+  animation: bounce 1.2s infinite ease-in-out;
+  filter: drop-shadow(0 0 15px #ff00c8);
+}
+
+@keyframes dance {
+  0% { transform: rotate(-10deg) scale(1); }
+  50% { transform: rotate(10deg) scale(1.1); }
+  100% { transform: rotate(-10deg) scale(1); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-25px) rotate(10deg); }
+}
+
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
