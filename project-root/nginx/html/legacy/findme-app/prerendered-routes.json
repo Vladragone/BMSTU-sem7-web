@@ -1,0 +1,13 @@
+{
+  "routes": {
+    "/legacy": {},
+    "/legacy/faq": {},
+    "/legacy/game": {},
+    "/legacy/game-result": {},
+    "/legacy/game-settings": {},
+    "/legacy/login": {},
+    "/legacy/profile": {},
+    "/legacy/rating": {},
+    "/legacy/register": {}
+  }
+}

@@ -1,0 +1,15 @@
+export default `<!DOCTYPE html><html lang="en" data-beasties-container><head>
+  <meta charset="utf-8">
+  <title>FindmeApp</title>
+  <base href="/legacy/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>html,body{margin:0;padding:0;height:100%;width:100%;background-image:url(/assets/world.png);background-size:cover;background-position:center;background-repeat:no-repeat;font-family:Arial,sans-serif;overflow:hidden}
+</style><link rel="stylesheet" href="styles-JG6W6TFZ.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles-JG6W6TFZ.css"></noscript><style ng-app-id="ng">.faq-wrapper[_ngcontent-ng-c191475125]{max-width:800px;margin:40px auto;padding:20px;background:#f9f9f9;border-radius:20px}.faq-wrapper[_ngcontent-ng-c191475125]   .faq-title[_ngcontent-ng-c191475125]{text-align:center;margin-bottom:30px;font-size:32px;font-weight:700;color:#333}.faq-wrapper[_ngcontent-ng-c191475125]   mat-expansion-panel[_ngcontent-ng-c191475125]{margin-bottom:10px}.faq-wrapper[_ngcontent-ng-c191475125]   mat-expansion-panel[_ngcontent-ng-c191475125]     .mat-expansion-panel-header{background-color:#e0e0e0}.faq-wrapper[_ngcontent-ng-c191475125]   .back-btn[_ngcontent-ng-c191475125]{display:block;margin:30px auto 0;padding:15px 40px;background-color:#888;border:none;border-radius:10px;color:#fff;font-size:18px;cursor:pointer;transition:background-color .3s ease}.faq-wrapper[_ngcontent-ng-c191475125]   .back-btn[_ngcontent-ng-c191475125]:hover{background-color:#666}.admin-add-form[_ngcontent-ng-c191475125]{margin-top:40px;padding-top:20px;border-top:2px solid #ccc}.admin-add-form[_ngcontent-ng-c191475125]   h3[_ngcontent-ng-c191475125]{font-size:24px;margin-bottom:15px;color:#444}.admin-add-form[_ngcontent-ng-c191475125]   input[_ngcontent-ng-c191475125], .admin-add-form[_ngcontent-ng-c191475125]   textarea[_ngcontent-ng-c191475125]{width:100%;padding:10px;font-size:16px;margin-bottom:15px;border-radius:8px;border:1px solid #bbb;box-sizing:border-box;font-family:inherit}.admin-add-form[_ngcontent-ng-c191475125]   textarea[_ngcontent-ng-c191475125]{resize:vertical;min-height:80px}.admin-add-form[_ngcontent-ng-c191475125]   button[_ngcontent-ng-c191475125]{padding:10px 30px;background-color:#2196f3;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;transition:background-color .3s ease}.admin-add-form[_ngcontent-ng-c191475125]   button[_ngcontent-ng-c191475125]:hover{background-color:#1769aa}</style></head>
+<body><!--nghm-->
+  <app-root ng-version="19.2.9" ngh="0" ng-server-context="ssg"><router-outlet></router-outlet><!----></app-root>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=be913ea3-a9c1-4f8a-9075-d916f31d3366
+" type="text/javascript"></script>
+<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-FXC6JULA.js" type="module"></script>
+
+<script id="ng-state" type="application/json">{"__nghData__":[{"c":{"0":[]}}]}</script></body></html>`;

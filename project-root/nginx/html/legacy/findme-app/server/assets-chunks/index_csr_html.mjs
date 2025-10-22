@@ -1,0 +1,16 @@
+export default `<!doctype html>
+<html lang="en" data-beasties-container="">
+<head>
+  <meta charset="utf-8">
+  <title>FindmeApp</title>
+  <base href="/legacy/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>html,body{margin:0;padding:0;height:100%;width:100%;background-image:url(/assets/world.png);background-size:cover;background-position:center;background-repeat:no-repeat;font-family:Arial,sans-serif;overflow:hidden}</style><link rel="stylesheet" href="styles-JG6W6TFZ.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles-JG6W6TFZ.css"></noscript></head>
+<body ngcm="">
+  <app-root></app-root>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=be913ea3-a9c1-4f8a-9075-d916f31d3366
+" type="text/javascript"></script>
+<script src="polyfills-FFHMD2TL.js" type="module"></script><script src="main-FXC6JULA.js" type="module"></script></body>
+</html>
+`;
