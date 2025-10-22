@@ -59,35 +59,50 @@ footer {
 }
 
 .logos {
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 50px;
+  margin-top: 80px;
+  position: relative;
+  height: 200px;
+  width: 100%;
+  overflow: visible;
+}
+
+.nginx-logo, .pg-logo {
+  position: absolute;
+  top: 0;
+  width: 120px;
+  filter: drop-shadow(0 0 20px #fff);
 }
 
 .nginx-logo {
-  width: 120px;
-  animation: dance 1.5s infinite alternate ease-in-out;
-  filter: drop-shadow(0 0 15px #00ff77);
+  right: 50%;
+  transform: translateX(-60px);
+  animation: nginxDance 6s linear infinite;
 }
 
 .pg-logo {
-  width: 100px;
-  animation: bounce 1.2s infinite ease-in-out;
-  filter: drop-shadow(0 0 15px #ff00c8);
+  left: 50%;
+  transform: translateX(60px);
+  animation: pgDance 6s linear infinite;
 }
 
-@keyframes dance {
-  0% { transform: rotate(-10deg) scale(1); }
-  50% { transform: rotate(10deg) scale(1.1); }
-  100% { transform: rotate(-10deg) scale(1); }
+@keyframes nginxDance {
+  0%   { transform: translateX(-60px) rotate(0deg); }
+  10%  { transform: translateX(-200px) rotate(-1080deg); }
+  20%  { transform: translateX(-60px) rotate(0deg); }
+  50%  { transform: translateX(-200px) rotate(-1080deg); }
+  60%  { transform: translateX(-60px) rotate(0deg); }
+  100% { transform: translateX(-60px) rotate(0deg); }
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-25px) rotate(10deg); }
+@keyframes pgDance {
+  0%   { transform: translateX(60px) rotate(0deg); }
+  10%  { transform: translateX(200px) rotate(1080deg); }
+  20%  { transform: translateX(60px) rotate(0deg); }
+  50%  { transform: translateX(200px) rotate(1080deg); }
+  60%  { transform: translateX(60px) rotate(0deg); }
+  100% { transform: translateX(60px) rotate(0deg); }
 }
+
 
 @keyframes bgShift {
   0% { background-position: 0% 50%; }
