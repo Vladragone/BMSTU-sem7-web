@@ -8,11 +8,13 @@ import java.util.Optional;
 
 public interface IGameSessionService {
 
+    List<GameSession> getAllSessions();
+    
+    List<GameSession> getSessionsByUser(Long userId);
+
     GameSession createFromDto(GameSessionRequestDTO dto);
 
     GameSession saveGameSession(GameSession gameSession);
-
-    List<GameSession> getSessionsByUser(Long userId);
 
     Optional<GameSession> getSessionById(Long id);
 

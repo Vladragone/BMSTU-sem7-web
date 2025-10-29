@@ -5,6 +5,7 @@ import com.example.game.dto.LocationResponseDTO;
 import com.example.game.model.Location;
 import com.example.game.service.interfaces.ILocationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
@@ -24,15 +25,27 @@ public class LocationControllerV1 {
         this.locationService = locationService;
     }
 
-    @Operation(summary = "Получить все локации")
+    @Operation(summary = "Получить локации", description = "Получить все локации или отфильтровать по группе")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Локации успешно получены"),
             @ApiResponse(responseCode = "204", description = "Локации отсутствуют")
     })
     @GetMapping
-    public ResponseEntity<List<LocationResponseDTO>> getAllLocations() {
-        List<Location> locations = locationService.getAllLocations();
-        if (locations.isEmpty()) return ResponseEntity.noContent().build();
+    public ResponseEntity<List<LocationResponseDTO>> getLocations(
+            @Parameter(description = "ID группы для фильтрации") 
+            @RequestParam(required = false) Long groupId) {
+        
+        List<Location> locations;
+        
+        if (groupId != null) {
+            locations = locationService.getLocationsByGroupId(groupId);
+        } else {
+            locations = locationService.getAllLocations();
+        }
+        
+        if (locations.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
 
         List<LocationResponseDTO> dtos = locations.stream()
                 .map(this::toResponseDto)
@@ -41,21 +54,15 @@ public class LocationControllerV1 {
         return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "Получить все локации по ID группы")
+    @Operation(summary = "Получить локацию по ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Локации успешно получены"),
-            @ApiResponse(responseCode = "204", description = "Локации отсутствуют")
+            @ApiResponse(responseCode = "200", description = "Локация найдена"),
+            @ApiResponse(responseCode = "404", description = "Локация не найдена")
     })
-    @GetMapping("/group/{groupId}")
-    public ResponseEntity<List<LocationResponseDTO>> getLocationsByGroup(@PathVariable Long groupId) {
-        List<Location> locations = locationService.getLocationsByGroupId(groupId);
-        if (locations.isEmpty()) return ResponseEntity.noContent().build();
-
-        List<LocationResponseDTO> dtos = locations.stream()
-                .map(this::toResponseDto)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(dtos);
+    @GetMapping("/{id}")
+    public ResponseEntity<LocationResponseDTO> getLocationById(@PathVariable Long id) {
+        Location location = locationService.getLocationById(id);
+        return ResponseEntity.ok(toResponseDto(location));
     }
 
     @Operation(summary = "Добавить новую локацию")
@@ -69,7 +76,25 @@ public class LocationControllerV1 {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(saved));
     }
 
+    @Operation(summary = "Обновить локацию")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Локация обновлена"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
+            @ApiResponse(responseCode = "404", description = "Локация не найдена")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<LocationResponseDTO> updateLocation(
+            @PathVariable Long id, 
+            @RequestBody LocationRequestDTO dto) {
+        Location updated = locationService.updateLocationFromDto(id, dto);
+        return ResponseEntity.ok(toResponseDto(updated));
+    }
+
     @Operation(summary = "Удалить локацию")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Локация удалена"),
+            @ApiResponse(responseCode = "404", description = "Локация не найдена")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
         locationService.deleteLocation(id);

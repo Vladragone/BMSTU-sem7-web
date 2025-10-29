@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GameRoundService implements IGameRoundService {
@@ -27,6 +28,22 @@ public class GameRoundService implements IGameRoundService {
         this.gameRoundRepository = gameRoundRepository;
         this.gameSessionRepository = gameSessionRepository;
         this.locationRepository = locationRepository;
+    }
+
+    @Override
+    public List<GameRound> getAllRounds() {
+        try {
+            return gameRoundRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении списка раундов", e);
+        }
+    }
+
+    @Override
+    public List<GameRound> getRoundsBySessionId(Long sessionId) {
+        GameSession session = gameSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Сессия не найдена"));
+        return gameRoundRepository.findBySession(session);
     }
 
     @Override
@@ -52,13 +69,6 @@ public class GameRoundService implements IGameRoundService {
     }
 
     @Override
-    public List<GameRound> getRoundsBySessionId(Long sessionId) {
-        GameSession session = gameSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Сессия не найдена"));
-        return gameRoundRepository.findBySession(session);
-    }
-
-    @Override
     public GameRound getCurrentRoundBySessionId(Long sessionId) {
         GameSession session = gameSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Сессия не найдена"));
@@ -72,5 +82,10 @@ public class GameRoundService implements IGameRoundService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при сохранении раунда", e);
         }
+    }
+
+    @Override
+    public Optional<GameRound> getRoundById(Long id) {
+        return gameRoundRepository.findById(id);
     }
 }
