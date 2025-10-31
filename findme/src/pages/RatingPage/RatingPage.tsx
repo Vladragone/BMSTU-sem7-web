@@ -6,7 +6,7 @@ import "./RatingPage.css";
 
 const RatingPage: React.FC = () => {
   const [ratingData, setRatingData] = useState<RatingResponse | null>(null);
-  const [sortBy, setSortBy] = useState<"points" | "games">("points");
+  const [sortBy, setSortBy] = useState<"score" | "games">("score");
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const RatingPage: React.FC = () => {
       setRatingData(data);
     } catch (err) {
       console.error("Ошибка при загрузке рейтинга", err);
+      setRatingData({ topUsers: [], currentUserRank: 0, sortBy });
     } finally {
       setLoading(false);
     }
@@ -28,12 +29,11 @@ const RatingPage: React.FC = () => {
   }, [sortBy]);
 
   const toggleSort = () => {
-    setSortBy(sortBy === "points" ? "games" : "points");
+    setSortBy(sortBy === "score" ? "games" : "score");
   };
 
   const startGame = () => navigate("/game-settings");
   const goToProfile = () => navigate("/profile");
-
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/");
@@ -53,11 +53,11 @@ const RatingPage: React.FC = () => {
 
   return (
     <div className="rating-page">
-      {ratingData ? (
+      {ratingData && Array.isArray(ratingData.topUsers) ? (
         <>
           <h2>
             Топ 3 игроков (сортировка:{" "}
-            {ratingData.sortBy === "points" ? "по очкам" : "по числу игр"})
+            {ratingData.sortBy === "score" ? "по очкам" : "по числу игр"})
           </h2>
 
           <table>
@@ -67,33 +67,37 @@ const RatingPage: React.FC = () => {
                 <th>Пользователь</th>
                 <th>Очки</th>
                 <th>Игры</th>
-                <th>Дата регистрации</th>
               </tr>
             </thead>
             <tbody>
-              {ratingData.top.map((profile, i) => (
-                <tr key={profile.user?.username || i}>
-                  <td>{i + 1}</td>
-                  <td>{profile.user?.username}</td>
-                  <td>{profile.score}</td>
-                  <td>{profile.gameNum}</td>
-                  <td>{new Date(profile.regDate).toLocaleDateString()}</td>
+              {ratingData.topUsers.length > 0 ? (
+                ratingData.topUsers.map((user, i) => (
+                  <tr key={user.username || i}>
+                    <td>{user.rank || i + 1}</td>
+                    <td>{user.username}</td>
+                    <td>{user.score}</td>
+                    <td>{user.gameNum}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4}>Нет данных для отображения</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
-          <p className="your-rank">Ваш ранг: {ratingData.yourRank}</p>
+          <p className="your-rank">Ваш ранг: {ratingData.currentUserRank}</p>
 
           <div className="sorting">
             <label>Сортировать:</label>
             <div className="switch-container" onClick={toggleSort}>
-              <div className={`switch ${sortBy === "points" ? "active" : ""}`}>
+              <div className={`switch ${sortBy === "score" ? "active" : ""}`}>
                 <div className="switch-button"></div>
               </div>
             </div>
             <span className="sort-label">
-              {sortBy === "points" ? "По очкам" : "По играм"}
+              {sortBy === "score" ? "По очкам" : "По играм"}
             </span>
           </div>
 

@@ -33,11 +33,17 @@
 
 .select-box {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+  outline: none;
+}
+
+.location-selection-box {
+  margin-bottom: 30px;
 }
 
 .button-group {
@@ -45,37 +51,37 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 25px;
 }
 
 .start-button {
-  background-color: #4caf50;
-  color: white;
+  background-color: #4caf50 !important;
+  color: white !important;
   padding: 12px 0;
   font-size: 16px;
   width: 100%;
-  border: none;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .start-button:hover {
-  background-color: #3e8e41;
+  background-color: #3e8e41 !important;
 }
 
 .back-button {
-  background-color: #f44336;
-  color: white;
+  background-color: #f44336 !important;
+  color: white !important;
   padding: 12px 0;
   font-size: 16px;
   width: 100%;
-  border: none;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .back-button:hover {
-  background-color: #d32f2f;
+  background-color: #d32f2f !important;
 }

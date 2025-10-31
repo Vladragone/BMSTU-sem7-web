@@ -2,23 +2,19 @@ import api from "../api/axiosInstance";
 
 export interface RatingUser {
   username: string;
-}
-
-export interface RatingProfile {
-  regDate: string;
   score: number;
   gameNum: number;
-  user?: RatingUser;
+  rank: number;
 }
 
 export interface RatingResponse {
-  top: RatingProfile[];
-  yourRank: number;
-  sortBy: "points" | "games";
+  topUsers: RatingUser[];
+  currentUserRank: number;
+  sortBy: "score" | "games";
 }
 
 export const getRating = async (
-  sortBy: "points" | "games",
+  sortBy: "score" | "games",
   limit: number = 3
 ): Promise<RatingResponse> => {
   try {
@@ -30,7 +26,11 @@ export const getRating = async (
       params: { sortBy, limit },
     });
 
-    return data;
+    return {
+      topUsers: Array.isArray(data?.topUsers) ? data.topUsers : [],
+      currentUserRank: data?.currentUserRank ?? 0,
+      sortBy: data?.sortBy === "score" || data?.sortBy === "games" ? data.sortBy : sortBy,
+    };
   } catch (error: any) {
     const status = error?.response?.status;
     let message = "Ошибка при загрузке рейтинга";
