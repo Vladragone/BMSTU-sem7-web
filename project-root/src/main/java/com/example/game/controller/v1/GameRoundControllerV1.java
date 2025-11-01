@@ -5,6 +5,7 @@ import com.example.game.dto.GameRoundResponseDTO;
 import com.example.game.model.GameRound;
 import com.example.game.service.interfaces.IGameRoundService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,43 @@ public class GameRoundControllerV1 {
         this.gameRoundService = gameRoundService;
     }
 
+    @Operation(summary = "Получить раунды", description = "Получить все раунды или отфильтровать по сессии")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Раунды успешно получены"),
+            @ApiResponse(responseCode = "204", description = "Раунды отсутствуют")
+    })
+    @GetMapping
+    public ResponseEntity<List<GameRoundResponseDTO>> getRounds(
+            @Parameter(description = "ID сессии для фильтрации")
+            @RequestParam(required = false) Long sessionId,
+            @Parameter(description = "Получить только последний раунд")
+            @RequestParam(required = false) Boolean last) {
+        
+        List<GameRound> rounds;
+        
+        if (sessionId != null && Boolean.TRUE.equals(last)) {
+            GameRound lastRound = gameRoundService.getCurrentRoundBySessionId(sessionId);
+            if (lastRound == null) {
+                return ResponseEntity.noContent().build();
+            }
+            rounds = List.of(lastRound);
+        } else if (sessionId != null) {
+            rounds = gameRoundService.getRoundsBySessionId(sessionId);
+        } else {
+            rounds = gameRoundService.getAllRounds();
+        }
+        
+        if (rounds.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<GameRoundResponseDTO> dtos = rounds.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
+
     @Operation(summary = "Создать новый раунд")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Раунд успешно создан"),
@@ -35,29 +73,16 @@ public class GameRoundControllerV1 {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(saved));
     }
 
-    @Operation(summary = "Получить все раунды по ID сессии")
+    @Operation(summary = "Получить раунд по ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Раунды успешно получены"),
-            @ApiResponse(responseCode = "204", description = "Раунды отсутствуют")
+            @ApiResponse(responseCode = "200", description = "Раунд найден"),
+            @ApiResponse(responseCode = "404", description = "Раунд не найден")
     })
-    @GetMapping("/session/{sessionId}")
-    public ResponseEntity<List<GameRoundResponseDTO>> getRoundsBySession(@PathVariable Long sessionId) {
-        List<GameRound> rounds = gameRoundService.getRoundsBySessionId(sessionId);
-        if (rounds.isEmpty()) return ResponseEntity.noContent().build();
-
-        List<GameRoundResponseDTO> dtos = rounds.stream()
-                .map(this::toResponseDto)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(dtos);
-    }
-
-    @Operation(summary = "Получить текущий (последний) раунд по ID сессии")
-    @GetMapping("/session/{sessionId}/current")
-    public ResponseEntity<GameRoundResponseDTO> getCurrentRound(@PathVariable Long sessionId) {
-        GameRound round = gameRoundService.getCurrentRoundBySessionId(sessionId);
-        if (round == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(toResponseDto(round));
+    @GetMapping("/{id}")
+    public ResponseEntity<GameRoundResponseDTO> getRoundById(@PathVariable Long id) {
+        return gameRoundService.getRoundById(id)
+                .map(round -> ResponseEntity.ok(toResponseDto(round)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     private GameRoundResponseDTO toResponseDto(GameRound entity) {

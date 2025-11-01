@@ -5,6 +5,7 @@ import com.example.game.dto.GameSessionResponseDTO;
 import com.example.game.model.GameSession;
 import com.example.game.service.interfaces.IGameSessionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,34 @@ public class GameSessionControllerV1 {
         this.gameSessionService = gameSessionService;
     }
 
+    @Operation(summary = "Получить игровые сессии", description = "Получить все сессии или отфильтровать по пользователю")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Сессии успешно получены"),
+            @ApiResponse(responseCode = "204", description = "Сессий нет")
+    })
+    @GetMapping
+    public ResponseEntity<List<GameSessionResponseDTO>> getGameSessions(
+            @Parameter(description = "ID пользователя для фильтрации")
+            @RequestParam(required = false) Long userId) {
+        
+        List<GameSession> sessions;
+        
+        if (userId != null) {
+            sessions = gameSessionService.getSessionsByUser(userId);
+        } else {
+            sessions = gameSessionService.getAllSessions();
+        }
+        
+        if (sessions.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        
+        List<GameSessionResponseDTO> dtos = sessions.stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @Operation(summary = "Создать новую игровую сессию")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Игровая сессия успешно создана"),
@@ -33,23 +62,6 @@ public class GameSessionControllerV1 {
     public ResponseEntity<GameSessionResponseDTO> createGameSession(@RequestBody GameSessionRequestDTO dto) {
         GameSession created = gameSessionService.createFromDto(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDto(created));
-    }
-
-    @Operation(summary = "Получить все сессии пользователя")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Сессии успешно получены"),
-            @ApiResponse(responseCode = "204", description = "Сессий нет")
-    })
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<GameSessionResponseDTO>> getUserSessions(@PathVariable Long userId) {
-        List<GameSession> sessions = gameSessionService.getSessionsByUser(userId);
-        if (sessions.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        List<GameSessionResponseDTO> dtos = sessions.stream()
-                .map(this::toResponseDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
     }
 
     @Operation(summary = "Получить сессию по ID")

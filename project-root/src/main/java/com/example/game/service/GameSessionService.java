@@ -26,6 +26,24 @@ public class GameSessionService implements IGameSessionService {
     }
 
     @Override
+    public List<GameSession> getAllSessions() {
+        try {
+            return gameSessionRepository.findAll();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении списка сессий", e);
+        }
+    }
+
+    @Override
+    public List<GameSession> getSessionsByUser(Long userId) {
+        try {
+            return gameSessionRepository.findByUserId(userId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении сессий пользователя", e);
+        }
+    }
+
+    @Override
     public GameSession createFromDto(GameSessionRequestDTO dto) {
         LocationGroup group = locationGroupRepository.findById(dto.getLocationGroupId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "LocationGroup не найден"));
@@ -45,15 +63,6 @@ public class GameSessionService implements IGameSessionService {
             return gameSessionRepository.save(gameSession);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при сохранении игровой сессии", e);
-        }
-    }
-
-    @Override
-    public List<GameSession> getSessionsByUser(Long userId) {
-        try {
-            return gameSessionRepository.findByUserId(userId);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при получении сессий пользователя", e);
         }
     }
 
